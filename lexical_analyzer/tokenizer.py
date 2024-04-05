@@ -15,7 +15,7 @@ KEYWORDS = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', '
 def tokenize(program: str) -> List[Token]:
     tokens: List[Token] = []
 
-    lexeme_begin = 13
+    lexeme_begin = 0
     while lexeme_begin < len(program):
         temp = ld.is_bool(program[lexeme_begin:])
         temp = ld.is_break(program[lexeme_begin:])
