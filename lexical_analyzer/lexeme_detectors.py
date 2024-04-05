@@ -78,12 +78,12 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
         match state:
             case 0:
                 if string[forward] != '/':
-                    return forward, None
+                    break
                 state = 1
                 forward += 1
             case 1:
                 if string[forward] != '/':
-                    return forward, None
+                    break
                 state = 2
                 forward += 1
             case 2:
@@ -93,6 +93,8 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 3
             case 3:
                 return forward, Token("T_Comment", f"{string[:forward]}")
+
+    return forward, None
 
 
 def is_whitespace(string: str) -> Tuple[bool, Token] | Tuple[bool, None]:
