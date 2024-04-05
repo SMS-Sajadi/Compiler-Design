@@ -15,10 +15,13 @@ KEYWORDS = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', '
 def tokenize(program: str) -> List[Token]:
     tokens: List[Token] = []
 
-    lexeme_begin = 0
+    lexeme_begin = 13
     while lexeme_begin < len(program):
         temp = ld.is_bool(program[lexeme_begin:])
         temp = ld.is_break(program[lexeme_begin:])
+        temp = ld.is_whitespace(program[lexeme_begin:])
+        temp = ld.is_char(program[lexeme_begin:])
+        temp = ld.is_comment(program[lexeme_begin:])
         lexeme_begin += 1
 
     # for line, code in enumerate(program.splitlines(keepends=True), start=1):
@@ -31,6 +34,7 @@ def tokenize(program: str) -> List[Token]:
 
 tokenize("""
 int main() {
+// helsd;fks;dk;sldkf
     bool x = true;
     return 0;
 }""")

@@ -64,3 +64,48 @@ def is_char(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     if string[0:4] == "char":
         return 4, Token("T_Char", "char")
     return 0, None
+
+
+def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a comment.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while True:
+        match state:
+            case 0:
+                if string[forward] != '/':
+                    return forward, None
+                state = 1
+                forward += 1
+            case 1:
+                if string[forward] != '/':
+                    return forward, None
+                state = 2
+                forward += 1
+            case 2:
+                if string[forward] != '\n':
+                    forward += 1
+                else:
+                    state = 3
+            case 3:
+                return forward, Token("T_Comment", f"{string[:forward]}")
+
+
+def is_whitespace(string: str) -> Tuple[bool, Token] | Tuple[bool, None]:
+    """
+    Check if a string is a whitespace.
+    :param string: this is the entry text to be checked.
+    :return: The first element is True if a '\n' character is detected and second element is the Token object.
+    """
+    if string[0] == '\n':
+        return True, Token("T_Whitespace", "\n")
+    if string[0] == '\t':
+        return False, Token("T_Whitespace", "\t")
+    if string[0] == ' ':
+        return False, Token("T_Whitespace", " ")
+
+    return False, None
