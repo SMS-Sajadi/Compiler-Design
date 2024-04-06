@@ -22,6 +22,7 @@ def tokenize(program: str) -> List[Token]:
         temp = ld.is_whitespace(program[lexeme_begin:])
         temp = ld.is_char(program[lexeme_begin:])
         temp = ld.is_comment(program[lexeme_begin:])
+        temp = ld.is_id(program[lexeme_begin:])
         lexeme_begin += 1
 
     # for line, code in enumerate(program.splitlines(keepends=True), start=1):

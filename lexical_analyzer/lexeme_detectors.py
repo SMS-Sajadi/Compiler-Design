@@ -23,22 +23,22 @@ def is_bool(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     #     match state:
     #         case 0:
     #             if string[forward] != 'b':
-    #                 return forward, None
+    #                 return 0, None
     #             state = 1
     #             forward += 1
     #         case 1:
     #             if string[forward] != 'o':
-    #                 return forward, None
+    #                 return 0, None
     #             state = 2
     #             forward += 1
     #         case 2:
     #             if string[forward] != 'o':
-    #                 return forward, None
+    #                 return 0, None
     #             state = 3
     #             forward += 1
     #         case 3:
     #             if string[forward] != 'l':
-    #                 return forward, None
+    #                 return 0, None
     #             state = 4
     #         case 4:
     #             return forward, Token("T_Bool", "bool")
@@ -94,7 +94,7 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
             case 3:
                 return forward, Token("T_Comment", f"{string[:forward]}")
 
-    return forward, None
+    return 0, None
 
 
 def is_whitespace(string: str) -> Tuple[bool, Token] | Tuple[bool, None]:
@@ -111,3 +111,29 @@ def is_whitespace(string: str) -> Tuple[bool, Token] | Tuple[bool, None]:
         return False, Token("T_Whitespace", " ")
 
     return False, None
+
+
+def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a variable name or function name.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while True:
+        match state:
+            case 0:
+                if not string[forward].isalpha() and string[forward] != '_':
+                    break
+                state = 1
+                forward += 1
+            case 1:
+                if not string[forward].isalpha() and string[forward] != '_' and not string[forward].isdigit():
+                    state = 2
+                else:
+                    forward += 1
+            case 2:
+                return forward, Token("T_Id", f"{string[:forward + 1]}")
+
+    return 0, None
