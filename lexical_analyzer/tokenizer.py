@@ -9,21 +9,64 @@ from token_base import Token
 import lexeme_detectors as ld
 
 
-KEYWORDS = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
-
-
 def tokenize(program: str) -> List[Token]:
     tokens: List[Token] = []
 
-    lexeme_begin = 0
+    lexeme_begin: int = 0
+    line: int = 1
     while lexeme_begin < len(program):
-        temp = ld.is_bool(program[lexeme_begin:])
-        temp = ld.is_break(program[lexeme_begin:])
-        temp = ld.is_whitespace(program[lexeme_begin:])
-        temp = ld.is_char(program[lexeme_begin:])
-        temp = ld.is_comment(program[lexeme_begin:])
-        temp = ld.is_id(program[lexeme_begin:])
+        is_new_line, whitespace_token = ld.is_whitespace(program[lexeme_begin:])
+        if whitespace_token is not None:
+            lexeme_begin += 1
+            tokens.append(whitespace_token)
+            if is_new_line:
+                line += 1
+            continue
+
+        forward, token = ld.is_bool(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
+        forward, token = ld.is_break(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
+        forward, token = ld.is_char(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
+        forward, token = ld.is_comment(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
+        forward, token = ld.is_id(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
         lexeme_begin += 1
+
+        # detected_tokens: List[Tuple[int, Token | None]] = list()
+
+        # detected_tokens.append(ld.is_bool(program[lexeme_begin:]))
+        # detected_tokens.append(ld.is_break(program[lexeme_begin:]))
+        # detected_tokens.append(ld.is_char(program[lexeme_begin:]))
+        # detected_tokens.append(ld.is_comment(program[lexeme_begin:]))
+        # detected_tokens.append(ld.is_id(program[lexeme_begin:]))
+
+        # max_forward = max(detected_tokens, key=lambda x: x[1])
+        # for forward, token in detected_tokens:
+        #     if forward == max_forward:
+
 
     # for line, code in enumerate(program.splitlines(keepends=True), start=1):
     #
@@ -33,9 +76,9 @@ def tokenize(program: str) -> List[Token]:
     return tokens
 
 
-tokenize("""
+print(*tokenize("""
 int main() {
 // helsd;fks;dk;sldkf
     bool x = true;
     return 0;
-}""")
+}"""))

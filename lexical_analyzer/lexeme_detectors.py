@@ -7,6 +7,8 @@
 from typing import Tuple
 from token_base import Token
 
+KEYWORDS = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
+
 
 def is_bool(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
@@ -134,6 +136,8 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 else:
                     forward += 1
             case 2:
+                if string[:forward] in KEYWORDS:
+                    break
                 return forward, Token("T_Id", f"{string[:forward + 1]}")
 
     return 0, None
