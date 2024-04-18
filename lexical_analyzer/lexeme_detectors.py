@@ -303,3 +303,60 @@ def is_delimiter(string: str) -> Tuple[int, Token] | Tuple[int, None]:
         return 1, Token("T_Semicolon", f"{string[0]}")
 
     return 0, None
+
+
+def is_bracket(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a bracket character.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[0] == ']':
+        return 1, Token("T_RB", f"{string[0]}")
+
+    if string[0] == '[':
+        return 1, Token("T_LB", f"{string[0]}")
+
+    return 0, None
+
+
+def is_curly_bracket(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a curly bracket character.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[0] == '}':
+        return 1, Token("T_RC", f"{string[0]}")
+
+    if string[0] == '{':
+        return 1, Token("T_LC", f"{string[0]}")
+
+    return 0, None
+
+
+def is_parenthesis(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a Parenthesis character.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[0] == ')':
+        return 1, Token("T_RP", f"{string[0]}")
+
+    if string[0] == '(':
+        return 1, Token("T_LP", f"{string[0]}")
+
+    return 0, None
+
+
+def is_assignment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is an assignment character.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[0] == '=':
+        return 1, Token("T_Assign", f"{string[0]}")
+
+    return 0, None
