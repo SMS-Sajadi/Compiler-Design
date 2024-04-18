@@ -360,3 +360,21 @@ def is_assignment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
         return 1, Token("T_Assign", f"{string[0]}")
 
     return 0, None
+
+
+def is_logical(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string has a logical token.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[:2] == "&&":
+        return 2, Token("T_LOp_AND", f"{string[:2]}")
+
+    if string[:2] == "||":
+        return 2, Token("T_LOp_OR", f"{string[:2]}")
+
+    if string[0] == '!':
+        return 1, Token("T_LOp_NOT", f"{string[0]}")
+
+    return 0, None
