@@ -15,9 +15,12 @@ def tokenize(program: str) -> List[Token]:
     lexeme_begin: int = 0
     line: int = 1
     while lexeme_begin < len(program):
-        is_new_line, whitespace_token = ld.is_whitespace(program[lexeme_begin:])
+        is_new_line, is_tab, whitespace_token = ld.is_whitespace(program[lexeme_begin:])
         if whitespace_token is not None:
-            lexeme_begin += 1
+            if is_tab:
+                lexeme_begin += 2
+            else:
+                lexeme_begin += 1
             tokens.append(whitespace_token)
             if is_new_line:
                 line += 1
@@ -42,6 +45,18 @@ def tokenize(program: str) -> List[Token]:
             continue
 
         forward, token = ld.is_comment(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
+        forward, token = ld.is_string(program[lexeme_begin:])
+        if token is not None:
+            tokens.append(token)
+            lexeme_begin += forward
+            continue
+
+        forward, token = ld.is_character(program[lexeme_begin:])
         if token is not None:
             tokens.append(token)
             lexeme_begin += forward
@@ -76,7 +91,8 @@ def tokenize(program: str) -> List[Token]:
     return tokens
 
 
-print(*tokenize("""
+print(*tokenize(r"""
+"\"helllo"
 int main() {
 // helsd;fks;dk;sldkf
     bool x = true;

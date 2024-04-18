@@ -9,7 +9,7 @@ from lexical_analyzer.tokenizer import tokenize
 
 def main(source, debug=False):
     with open(source, "r") as file:
-        program = file.read()
+        program = repr(file.read())
     tokens = tokenize(program)
 
 
@@ -20,7 +20,7 @@ if __name__ == '__main__':
     """
     parser = ArgumentParser(description='PL Compiler')
     parser.add_argument('--source', default='./*.pl', type=str, help='Input Program Address')
-    parser.add_argument('--debug', default='True', type=str, help='If True it will show debugging info')
+    parser.add_argument('--debug', default='True', type=str, help='If True, it will show debugging info')
 
     args = parser.parse_args()
     SOURCE = args.source

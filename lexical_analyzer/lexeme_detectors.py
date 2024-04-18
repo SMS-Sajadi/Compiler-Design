@@ -76,7 +76,7 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while True:
+    while forward < len(string):
         match state:
             case 0:
                 if string[forward] != '/':
@@ -93,26 +93,28 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     forward += 1
                 else:
                     state = 3
+                    forward += 1
             case 3:
                 return forward, Token("T_Comment", f"{string[:forward]}")
 
     return 0, None
 
 
-def is_whitespace(string: str) -> Tuple[bool, Token] | Tuple[bool, None]:
+def is_whitespace(string: str) -> Tuple[bool, bool, Token] | Tuple[bool, bool, None]:
     """
     Check if a string is a whitespace.
     :param string: this is the entry text to be checked.
-    :return: The first element is True if a '\n' character is detected and second element is the Token object.
+    :return: The first element is True if a '\n' character is detected and second element is True when we have
+     just a tab character. The last item is the Token object.
     """
     if string[0] == '\n':
-        return True, Token("T_Whitespace", "\n")
-    if string[0] == '\t':
-        return False, Token("T_Whitespace", "\t")
+        return True, False, Token("T_Whitespace", "\\n")
+    if string[:3] == '\\t':
+        return False, True, Token("T_Whitespace", "\\t")
     if string[0] == ' ':
-        return False, Token("T_Whitespace", " ")
+        return False, False, Token("T_Whitespace", " ")
 
-    return False, None
+    return False, False, None
 
 
 def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
@@ -123,7 +125,7 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while True:
+    while forward < len(string):
         match state:
             case 0:
                 if not string[forward].isalpha() and string[forward] != '_':
@@ -139,5 +141,150 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 if string[:forward] in KEYWORDS:
                     break
                 return forward, Token("T_Id", f"{string[:forward + 1]}")
+
+    return 0, None
+
+
+def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a decimal number.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while forward < len(string):
+        match state:
+            case 0:
+                if string[forward].isdigit():
+                    state = 1
+                    forward += 1
+                    continue
+
+                if string[forward] == '-':
+                    state = 2
+                    forward += 1
+                    continue
+
+                break
+            case 1:
+                if not string[forward].isdigit():
+                    state = 3
+                else:
+                    forward += 1
+            case 2:
+                if string[forward].isdigit():
+                    break
+                state = 1
+                forward += 1
+            case 3:
+                return forward, Token("T_Decimal", f"{string[:forward + 1]}")
+
+    return 0, None
+
+
+def is_hex(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a hexadecimal number.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while forward < len(string):
+        match state:
+            case 0:
+                if string[forward] != '0':
+                    break
+                state = 1
+                forward += 1
+            case 1:
+                if string[forward] != 'x':
+                    break
+                state = 2
+                forward += 1
+            case 2:
+                if (not string[forward].isdigit()
+                        and not ('A' < string[forward] < 'F')
+                        and not ('a' < string[forward] < 'f')):
+                    break
+                state = 3
+                forward += 1
+            case 3:
+                if (not string[forward].isdigit()
+                        and not ('A' < string[forward] < 'F')
+                        and not ('a' < string[forward] < 'f')):
+                    state = 4
+                else:
+                    forward += 1
+            case 4:
+                return forward, Token("T_Hexadecimal", f"{string[:forward + 1]}")
+
+    return 0, None
+
+
+def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is in-fact a string in program!
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while forward < len(string):
+        match state:
+            case 0:
+                if string[forward] != '\"':
+                    break
+                state = 1
+                forward += 1
+            case 1:
+                if string[forward:forward + 2] == r"\"":
+                    forward += 2
+                elif string[forward] != '\"':
+                    forward += 1
+                else:
+                    state = 3
+            # case 2:
+            #     if string[forward] not in ['\"', '\'', '\n', '\t', '\b', '\a', '\\']:
+            #         break
+            #     state = 1
+            #     forward += 1
+            case 3:
+                return forward, Token("T_String", f"{string[:forward + 1]}")
+
+    return 0, None
+
+
+def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a character.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while forward < len(string):
+        match state:
+            case 0:
+                if string[forward] != '\'':
+                    break
+                state = 1
+                forward += 1
+            case 1:
+                if string[forward:forward + 2] == r"\'" or string[forward:forward + 2] == r'\\':
+                    forward += 2
+                    state = 3
+                    continue
+
+                state = 3
+                forward += 1
+            case 3:
+                if string[forward] != '\'':
+                    break
+                state = 4
+                forward += 1
+            case 4:
+                return forward, Token("T_Char", f"{string[:forward]}")
 
     return 0, None

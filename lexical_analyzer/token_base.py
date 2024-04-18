@@ -4,6 +4,7 @@
     should not be used directly.
     (c) 2024|1403
 """
+import codecs
 
 
 class Token:
@@ -25,7 +26,7 @@ class Token:
         :param is_identifier: it shows if attribute is whether a str or pointer to symbol table
         """
         self.type = token_type
-        self.name = token_name
+        self.name = codecs.decode(token_name, 'unicode_escape')
         self.attribute = token_attribute
         self.line = token_line
         self.is_identifier = is_identifier
