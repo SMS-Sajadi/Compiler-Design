@@ -138,8 +138,9 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 else:
                     forward += 1
             case 2:
-                if string[:forward] in KEYWORDS:
-                    break
+                # TODO: Remove these codes
+                # if string[:forward] in KEYWORDS:
+                #     break
                 return forward, Token("T_Id", f"{string[:forward + 1]}")
 
     return 0, None
@@ -173,12 +174,12 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 else:
                     forward += 1
             case 2:
-                if string[forward].isdigit():
+                if not string[forward].isdigit():
                     break
                 state = 1
                 forward += 1
             case 3:
-                return forward, Token("T_Decimal", f"{string[:forward + 1]}")
+                return forward, Token("T_Decimal", f"{string[:forward]}")
 
     return 0, None
 
@@ -205,20 +206,20 @@ def is_hex(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 forward += 1
             case 2:
                 if (not string[forward].isdigit()
-                        and not ('A' < string[forward] < 'F')
-                        and not ('a' < string[forward] < 'f')):
+                        and not ('A' <= string[forward] <= 'F')
+                        and not ('a' <= string[forward] <= 'f')):
                     break
                 state = 3
                 forward += 1
             case 3:
                 if (not string[forward].isdigit()
-                        and not ('A' < string[forward] < 'F')
-                        and not ('a' < string[forward] < 'f')):
+                        and not ('A' <= string[forward] <= 'F')
+                        and not ('a' <= string[forward] <= 'f')):
                     state = 4
                 else:
                     forward += 1
             case 4:
-                return forward, Token("T_Hexadecimal", f"{string[:forward + 1]}")
+                return forward, Token("T_Hexadecimal", f"{string[:forward]}")
 
     return 0, None
 
@@ -244,6 +245,7 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 elif string[forward] != '\"':
                     forward += 1
                 else:
+                    forward += 1
                     state = 3
             # case 2:
             #     if string[forward] not in ['\"', '\'', '\n', '\t', '\b', '\a', '\\']:
@@ -251,7 +253,7 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
             #     state = 1
             #     forward += 1
             case 3:
-                return forward, Token("T_String", f"{string[:forward + 1]}")
+                return forward, Token("T_String", f"{string[:forward]}")
 
     return 0, None
 
