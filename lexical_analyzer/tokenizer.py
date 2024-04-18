@@ -15,7 +15,7 @@ def tokenize(program: str) -> List[Token]:
     lexeme_begin: int = 0
     line: int = 1
     while lexeme_begin < len(program):
-        max_forward: int = 1  # TODO: set it to 0
+        max_forward: int = 0  # TODO: set it to 0
         final_token: Token | None = None
 
         is_new_line, is_tab, whitespace_token = ld.is_whitespace(program[lexeme_begin:])
@@ -60,6 +60,46 @@ def tokenize(program: str) -> List[Token]:
             max_forward = forward
             final_token = token
 
+        forward, token = ld.is_delimiter(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_bracket(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_curly_bracket(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_parenthesis(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_assignment(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_logical(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_decimal(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
+        forward, token = ld.is_hex(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
         forward, token = ld.is_id(program[lexeme_begin:])
         if token is not None and forward > max_forward:
             max_forward = forward
@@ -88,6 +128,11 @@ def tokenize(program: str) -> List[Token]:
 
     return tokens
 
+# print(*tokenize(r"""
+# (0x2355
+# 0xfffff
+# 123)
+# """), sep="\n")
 
 print(*tokenize(r"""
 "\"helllo"
@@ -95,4 +140,4 @@ int main() {
 // helsd;fks;dk;sldkf
     bool x = true;
     return 0;
-}"""))
+}"""), sep="\n")
