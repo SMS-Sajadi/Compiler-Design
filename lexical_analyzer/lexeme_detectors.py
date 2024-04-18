@@ -285,6 +285,21 @@ def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 state = 4
                 forward += 1
             case 4:
-                return forward, Token("T_Char", f"{string[:forward]}")
+                return forward, Token("T_Character", f"{string[:forward]}")
+
+    return 0, None
+
+
+def is_delimiter(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string is a delimiter character.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[0] == ',':
+        return 1, Token("T_Comma", f"{string[0]}")
+
+    if string[0] == ';':
+        return 1, Token("T_Semicolon", f"{string[0]}")
 
     return 0, None
