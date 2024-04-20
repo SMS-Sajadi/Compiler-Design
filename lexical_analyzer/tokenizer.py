@@ -90,6 +90,11 @@ def tokenize(program: str) -> List[Token]:
             max_forward = forward
             final_token = token
 
+        forward, token = ld.is_relational(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
         forward, token = ld.is_decimal(program[lexeme_begin:])
         if token is not None and forward > max_forward:
             max_forward = forward
@@ -138,6 +143,6 @@ print(*tokenize(r"""
 "\"helllo"
 int main() {
 // helsd;fks;dk;sldkf
-    bool x = true;
+    bool x = y!= z;
     return 0;
 }"""), sep="\n")

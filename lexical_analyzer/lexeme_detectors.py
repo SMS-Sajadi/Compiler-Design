@@ -380,3 +380,67 @@ def is_logical(string: str) -> Tuple[int, Token] | Tuple[int, None]:
         return 1, Token("T_LOp_NOT", f"{string[0]}")
 
     return 0, None
+
+
+def is_relational(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string has a relational token.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    forward = 0
+    state = 0
+    while forward < len(string):
+        match state:
+            case 0:
+                if string[forward] == '<':
+                    forward += 1
+                    state = 1
+                    continue
+
+                if string[forward] == '>':
+                    forward += 1
+                    state = 2
+                    continue
+
+                if string[forward] == '!':
+                    forward += 1
+                    state = 3
+                    continue
+
+                if string[forward] == '=':
+                    forward += 1
+                    state = 4
+                    continue
+
+                break
+
+            case 1:
+                if string[forward] == '=':
+                    forward += 1
+                    return forward, Token("T_ROp_LE", f"{string[:forward]}")
+                else:
+                    return forward, Token("T_ROp_L", f"{string[:forward]}")
+
+            case 2:
+                if string[forward] == '=':
+                    forward += 1
+                    return forward, Token("T_ROp_GE", f"{string[:forward]}")
+                else:
+                    return forward, Token("T_ROp_G", f"{string[:forward]}")
+
+            case 3:
+                if string[forward] == '=':
+                    forward += 1
+                    return forward, Token("T_ROp_NE", f"{string[:forward]}")
+                else:
+                    break
+
+            case 4:
+                if string[forward] == '=':
+                    forward += 1
+                    return forward, Token("T_ROp_E", f"{string[:forward]}")
+                else:
+                    break
+
+    return 0, None
