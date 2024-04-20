@@ -31,7 +31,13 @@ class Token:
         self.line = token_line
         self.is_identifier = is_identifier
 
+    def set_line(self, line_number: int):
+        """
+        Sets the line of the token.
+        :param line_number:
+        :return:
+        """
+        self.line = line_number
+
     def __str__(self) -> str:
-        if not self.is_identifier:
-            return f"<{self.type}, {self.attribute}>"
-        return f"<{self.type}, <{self.name}, {self.line}>>"
+        return f"""{self.line}: {self.name} -> {self.type}"""
