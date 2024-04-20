@@ -45,6 +45,11 @@ def tokenize(program: str) -> List[Token]:
             max_forward = forward
             final_token = token
 
+        forward, token = ld.is_continue(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
         forward, token = ld.is_comment(program[lexeme_begin:])
         if token is not None and forward > max_forward:
             max_forward = forward

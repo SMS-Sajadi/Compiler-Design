@@ -68,6 +68,17 @@ def is_char(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     return 0, None
 
 
+def is_continue(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a continue Keyword.
+    :param string:
+    :return:
+    """
+    if string[:5] == "continue":
+        return 5, Token("T_Continue", "continue")
+    return 0, None
+
+
 def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     Check if the string is a comment.
