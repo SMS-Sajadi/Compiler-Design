@@ -24,6 +24,7 @@ def tokenize(program: str) -> List[Token]:
                 lexeme_begin += 2
             else:
                 lexeme_begin += 1
+            whitespace_token.set_line(line)
             tokens.append(whitespace_token)
             if is_new_line:
                 line += 1
@@ -95,6 +96,11 @@ def tokenize(program: str) -> List[Token]:
             max_forward = forward
             final_token = token
 
+        forward, token = ld.is_arithmatic(program[lexeme_begin:])
+        if token is not None and forward > max_forward:
+            max_forward = forward
+            final_token = token
+
         forward, token = ld.is_decimal(program[lexeme_begin:])
         if token is not None and forward > max_forward:
             max_forward = forward
@@ -111,6 +117,7 @@ def tokenize(program: str) -> List[Token]:
             final_token = token
 
         lexeme_begin += max_forward
+        final_token.set_line(line)
         tokens.append(final_token)
 
         # detected_tokens: List[Tuple[int, Token | None]] = list()
@@ -143,6 +150,6 @@ print(*tokenize(r"""
 "\"helllo"
 int main() {
 // helsd;fks;dk;sldkf
-    bool x = y!= z;
+    int x = 2 + y -z  - 45;
     return 0;
 }"""), sep="\n")

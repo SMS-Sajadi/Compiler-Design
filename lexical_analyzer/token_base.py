@@ -40,4 +40,4 @@ class Token:
         self.line = line_number
 
     def __str__(self) -> str:
-        return f"""{self.line}: {self.name} -> {self.type}"""
+        return f"""{self.line}: {self.name if self.type != "T_Whitespace" else "whitespace"} -> {self.type}"""
