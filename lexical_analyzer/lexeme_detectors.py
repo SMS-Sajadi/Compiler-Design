@@ -444,3 +444,27 @@ def is_relational(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     break
 
     return 0, None
+
+
+def is_arithmatic(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if the string has an arithmatic token.
+    :param string: this is the entry text to be checked.
+    :return: The first element is the length of detected token and second element is the Token object.
+    """
+    if string[0] == '+':
+        return 1, Token("T_AOp_PL", f"{string[0]}")
+
+    if string[0] == '-':
+        return 1, Token("T_AOp_MN", f"{string[0]}")
+
+    if string[0] == '*':
+        return 1, Token("T_AOp_ML", f"{string[0]}")
+
+    if string[0] == '/':
+        return 1, Token("T_AOp_DV", f"{string[0]}")
+
+    if string[0] == '%':
+        return 1, Token("T_AOp_RM", f"{string[0]}")
+
+    return 0, None
