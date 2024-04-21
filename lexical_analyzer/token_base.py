@@ -15,6 +15,7 @@ class Token:
                  token_name: str = "",
                  token_attribute: str = "",
                  token_line: int = None,
+                 token_index: int = None,
                  *,
                  is_identifier=False):
         """
@@ -25,10 +26,12 @@ class Token:
         :param token_line: the line of token first occurrence
         :param is_identifier: it shows if attribute is whether a str or pointer to symbol table
         """
+        # TODO: remove unnecessary attr and fix saving as repr
         self.type = token_type
-        self.name = codecs.decode(token_name, 'unicode_escape')
+        self.name = token_name
         self.attribute = token_attribute
         self.line = token_line
+        self.index = token_index
         self.is_identifier = is_identifier
 
     def set_line(self, line_number: int):
@@ -39,5 +42,13 @@ class Token:
         """
         self.line = line_number
 
+    def set_index(self, index: int):
+        """
+        Sets the line of the token.
+        :param index:
+        :return:
+        """
+        self.index = index
+
     def __str__(self) -> str:
-        return f"""{self.line}: {self.name if self.type != "T_Whitespace" else "whitespace"} -> {self.type}"""
+        return f"""{self.index}: {self.name if self.type != "T_Whitespace" else "whitespace"} -> {self.type}"""

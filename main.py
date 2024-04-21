@@ -9,6 +9,13 @@ from token_printer import print_tokens
 
 
 def main(source, debug=False, with_ws=False):
+    """
+    This is the main implementation of the PL Language Compiler.
+    :param source: this is address of the source file.
+    :param debug: this flag will enable debug mode.
+    :param with_ws: this flag is used for print mode of debug.
+    :return:
+    """
     # TODO: Fix reading from file
     with open(source, "r") as file:
         program = file.read()

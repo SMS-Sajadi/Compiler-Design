@@ -4,10 +4,12 @@
     should not be used directly.
     (c) 2024|1403
 """
-from typing import Tuple
-from token_base import Token
+from typing import Tuple, Final
+from lexical_analyzer.token_base import Token
 
-KEYWORDS = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
+KEYWORDS: Final = ['bool', 'break', 'char', 'continue', 'else', 'false', 'for', 'if', 'int', 'print', 'return', 'true']
+DIGITS: Final = "0123456789"
+ALPHA: Final = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 
 def is_bool(string: str) -> Tuple[int, Token] | Tuple[int, None]:
@@ -74,8 +76,96 @@ def is_continue(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     :param string:
     :return:
     """
-    if string[:5] == "continue":
-        return 5, Token("T_Continue", "continue")
+    if string[:8] == "continue":
+        return 8, Token("T_Continue", "continue")
+    return 0, None
+
+
+def is_else(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is an else Keyword.
+    :param string:
+    :return:
+    """
+    if string[:4] == "else":
+        return 4, Token("T_Else", "else")
+    return 0, None
+
+
+def is_false(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a false Keyword.
+    :param string:
+    :return:
+    """
+    if string[:5] == "false":
+        return 5, Token("T_False", "false")
+    return 0, None
+
+
+def is_for(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a for Keyword.
+    :param string:
+    :return:
+    """
+    if string[:3] == "for":
+        return 3, Token("T_For", "for")
+    return 0, None
+
+
+def is_if(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a if Keyword.
+    :param string:
+    :return:
+    """
+    if string[:2] == "if":
+        return 2, Token("T_If", "if")
+    return 0, None
+
+
+def is_int(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a int Keyword.
+    :param string:
+    :return:
+    """
+    if string[:3] == "int":
+        return 3, Token("T_Int", "int")
+    return 0, None
+
+
+def is_print(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a print Keyword.
+    :param string:
+    :return:
+    """
+    if string[:5] == "print":
+        return 5, Token("T_Print", "print")
+    return 0, None
+
+
+def is_return(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a return Keyword.
+    :param string:
+    :return:
+    """
+    if string[:6] == "return":
+        return 6, Token("T_Return", "return")
+    return 0, None
+
+
+def is_true(string: str) -> Tuple[int, Token] | Tuple[int, None]:
+    """
+    Check if a string is a true Keyword.
+    :param string:
+    :return:
+    """
+    if string[:4] == "true":
+        return 4, Token("T_True", "true")
     return 0, None
 
 
@@ -106,26 +196,47 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 3
                     forward += 1
             case 3:
-                return forward, Token("T_Comment", f"{string[:forward]}")
+                return forward, Token("T_Comment", f"{string[:forward - 1]}")
 
     return 0, None
 
 
-def is_whitespace(string: str) -> Tuple[bool, bool, Token] | Tuple[bool, bool, None]:
+def is_whitespace(string: str) -> Tuple[int, int, Token] | Tuple[int, int, None]:
     """
-    Check if a string is a whitespace.
+    Check if entry string is whitespace token.
     :param string: this is the entry text to be checked.
-    :return: The first element is True if a '\n' character is detected and second element is True when we have
-     just a tab character. The last item is the Token object.
+    :return: The first element is the length of ws token that is detected and second element is number of newline
+     characters that are seen in the token. The last item is the Token object itself.
     """
-    if string[0] == '\n':
-        return True, False, Token("T_Whitespace", "\\n")
-    if string[:3] == '\\t':
-        return False, True, Token("T_Whitespace", "\\t")
-    if string[0] == ' ':
-        return False, False, Token("T_Whitespace", " ")
+    forward = 0
+    new_line = 0
+    while forward < len(string):
+        if string[forward] == '\n':
+            new_line += 1
+            forward += 1
 
-    return False, False, None
+        elif string[forward] == ' ' or string[forward] == '\t':
+            forward += 1
+
+        else:
+            break
+
+    if forward == 0:
+        return 0, 0, None
+
+    return forward, new_line, Token("T_Whitespace", f"{string[:forward]}")
+
+
+    # if string[0] == '\n':
+    #     return True, False, Token("T_Whitespace", "\\n")
+    #
+    # if string[0] == '\t':
+    #     return False, True, Token("T_Whitespace", "\\t")
+    #
+    # if string[0] == ' ':
+    #     return False, False, Token("T_Whitespace", " ")
+    #
+    # return False, False, None
 
 
 def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
@@ -139,7 +250,7 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     while forward < len(string):
         match state:
             case 0:
-                if not string[forward].isalpha() and string[forward] != '_':
+                if not string[forward].isalpha() and string[forward] != '_':  # OR not string[forward] in ALPHA
                     break
                 state = 1
                 forward += 1
@@ -149,10 +260,7 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 else:
                     forward += 1
             case 2:
-                # TODO: Remove these codes
-                # if string[:forward] in KEYWORDS:
-                #     break
-                return forward, Token("T_Id", f"{string[:forward + 1]}")
+                return forward, Token("T_Id", f"{string[:forward]}")
 
     return 0, None
 
@@ -173,7 +281,7 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     forward += 1
                     continue
 
-                if string[forward] == '-':
+                if string[forward] == '-' or string[forward] == '+':
                     state = 2
                     forward += 1
                     continue
@@ -211,7 +319,7 @@ def is_hex(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 state = 1
                 forward += 1
             case 1:
-                if string[forward] != 'x':
+                if string[forward] != 'x' and string[forward] != 'X':
                     break
                 state = 2
                 forward += 1
@@ -258,13 +366,14 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 else:
                     forward += 1
                     state = 3
+            # TODO: Remove these lines
             # case 2:
             #     if string[forward] not in ['\"', '\'', '\n', '\t', '\b', '\a', '\\']:
             #         break
             #     state = 1
             #     forward += 1
             case 3:
-                return forward, Token("T_String", f"{string[:forward]}")
+                return forward, Token("T_String", fr"{string[:forward]}")
 
     return 0, None
 
@@ -298,7 +407,7 @@ def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 state = 4
                 forward += 1
             case 4:
-                return forward, Token("T_Character", f"{string[:forward]}")
+                return forward, Token("T_Character", fr"{string[:forward]}")
 
     return 0, None
 
