@@ -3,6 +3,7 @@
     Here we will use all other modules to compile and run the program.
     (c) 2024|1403
 """
+import argparse
 from argparse import ArgumentParser
 from lexical_analyzer.tokenizer import tokenize
 from token_printer import print_tokens
@@ -21,7 +22,7 @@ def main(source, debug=False, with_ws=False):
         program = file.read()
     tokens = tokenize(program)
 
-    if(debug):
+    if debug:
         print_tokens(tokens, with_ws_print=with_ws)
 
 
@@ -32,13 +33,14 @@ if __name__ == '__main__':
     """
     parser = ArgumentParser(description='PL Compiler')
     parser.add_argument('--source', default='./lexical_analyzer/test/test.c', type=str, help='Input Program Address')
-    parser.add_argument('--debug', default='True', type=str, help='If True, it will show debugging info')
-    parser.add_argument('--with-ws', default='True', type=str, help='If True, it will print the withspaces')
+    parser.add_argument('--debug', default=False, action=argparse.BooleanOptionalAction,
+                        help='it will show debugging info')
+    parser.add_argument('--with-ws', default=False, action=argparse.BooleanOptionalAction,
+                        help='it will print the whitespaces')
 
     args = parser.parse_args()
     SOURCE = args.source
-    DEBUG = True if args.debug == 'True' else False
-    WITH_WS = True if args.with_ws == 'True' else False
+    DEBUG = args.debug
+    WITH_WS = args.with_ws
 
     main(SOURCE, DEBUG, WITH_WS)
-
