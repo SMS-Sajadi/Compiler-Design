@@ -116,7 +116,7 @@ def is_for(string: str) -> Tuple[int, Token] | Tuple[int, None]:
 
 def is_if(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
-    Check if a string is a if Keyword.
+    Check if a string is an if Keyword.
     :param string:
     :return:
     """
