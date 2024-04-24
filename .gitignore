@@ -1,4 +1,7 @@
 # The Editor files
 /.idea/
 /.vscode/
+# MAC Files
 /.DS_Store/
+# Compiled Files
+/__pycache__/
