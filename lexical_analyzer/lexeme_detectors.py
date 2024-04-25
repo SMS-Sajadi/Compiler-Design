@@ -21,31 +21,6 @@ def is_bool(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     if string[0:4] == "bool":
         return 4, Token("T_Bool", "bool")
     return 0, None
-    # forward = 0
-    # state = 0
-    # while True:
-    #     match state:
-    #         case 0:
-    #             if string[forward] != 'b':
-    #                 return 0, None
-    #             state = 1
-    #             forward += 1
-    #         case 1:
-    #             if string[forward] != 'o':
-    #                 return 0, None
-    #             state = 2
-    #             forward += 1
-    #         case 2:
-    #             if string[forward] != 'o':
-    #                 return 0, None
-    #             state = 3
-    #             forward += 1
-    #         case 3:
-    #             if string[forward] != 'l':
-    #                 return 0, None
-    #             state = 4
-    #         case 4:
-    #             return forward, Token("T_Bool", "bool")
 
 
 def is_break(string: str) -> Tuple[int, Token] | Tuple[int, None]:
@@ -177,7 +152,7 @@ def is_comment(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while forward < len(string):
+    while state == 3 or forward < len(string):
         match state:
             case 0:
                 if string[forward] != '/':
@@ -227,18 +202,6 @@ def is_whitespace(string: str) -> Tuple[int, int, Token] | Tuple[int, int, None]
     return forward, new_line, Token("T_Whitespace", f"{string[:forward]}")
 
 
-    # if string[0] == '\n':
-    #     return True, False, Token("T_Whitespace", "\\n")
-    #
-    # if string[0] == '\t':
-    #     return False, True, Token("T_Whitespace", "\\t")
-    #
-    # if string[0] == ' ':
-    #     return False, False, Token("T_Whitespace", " ")
-    #
-    # return False, False, None
-
-
 def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     Check if the string is a variable name or function name.
@@ -247,7 +210,7 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while forward < len(string):
+    while state == 2 or forward < len(string):
         match state:
             case 0:
                 if not string[forward].isalpha() and string[forward] != '_':  # OR not string[forward] in ALPHA
@@ -259,8 +222,12 @@ def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 2
                 else:
                     forward += 1
+
             case 2:
                 return forward, Token("T_Id", f"{string[:forward]}")
+
+        if forward == len(string):
+            state = 2
 
     return 0, None
 
@@ -273,7 +240,7 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while forward < len(string):
+    while state == 3 or forward < len(string):
         match state:
             case 0:
                 if string[forward].isdigit():
@@ -292,6 +259,9 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 3
                 else:
                     forward += 1
+
+                if forward == len(string):
+                    state = 3
             case 2:
                 if not string[forward].isdigit():
                     break
@@ -311,7 +281,7 @@ def is_hex(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while forward < len(string):
+    while state == 4 or forward < len(string):
         match state:
             case 0:
                 if string[forward] != '0':
@@ -337,6 +307,10 @@ def is_hex(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 4
                 else:
                     forward += 1
+
+                if forward == len(string):
+                    state = 4
+
             case 4:
                 return forward, Token("T_Hexadecimal", f"{string[:forward]}")
 
@@ -351,7 +325,7 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while forward < len(string):
+    while state == 2 or forward < len(string):
         match state:
             case 0:
                 if string[forward] != '\"':
@@ -365,14 +339,8 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     forward += 1
                 else:
                     forward += 1
-                    state = 3
-            # TODO: Remove these lines
-            # case 2:
-            #     if string[forward] not in ['\"', '\'', '\n', '\t', '\b', '\a', '\\']:
-            #         break
-            #     state = 1
-            #     forward += 1
-            case 3:
+                    state = 2
+            case 2:
                 return forward, Token("T_String", fr"{string[:forward]}")
 
     return 0, None
@@ -386,7 +354,7 @@ def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while forward < len(string):
+    while state == 4 or forward < len(string):
         match state:
             case 0:
                 if string[forward] != '\'':
@@ -394,11 +362,21 @@ def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 state = 1
                 forward += 1
             case 1:
-                if string[forward:forward + 2] == r"\'" or string[forward:forward + 2] == r'\\':
+                if string[forward:forward + 2] == r"\'":
                     forward += 2
                     state = 3
                     continue
 
+                elif string[forward] == '\\':
+                    forward += 1
+                    state = 2
+                    continue
+
+                state = 3
+                forward += 1
+            case 2:
+                if string[forward] == '\'':
+                    break
                 state = 3
                 forward += 1
             case 3:
