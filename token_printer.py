@@ -21,3 +21,19 @@ def print_tokens(tokens: List[Token], *, with_ws_print: bool =True) -> None:
         for token in tokens:
             if token.type != "T_Whitespace":
                 print(token)
+
+
+def write_to_file(tokens: List[Token], *, filename: str, with_ws_print: bool=True) -> None:
+    """
+    This Function will write the tokens of lexical analyzer to a file.
+    :param tokens: List of tokens.
+    :param filename: Address of output file.
+    :return:
+    """
+    with open(filename, 'w') as file:
+        for token in tokens:
+            if with_ws_print:
+                file.write(str(token) + '\n')
+
+            elif token.type != "T_Whitespace":
+                file.write(str(token) + '\n')
