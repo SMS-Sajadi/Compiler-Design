@@ -541,6 +541,12 @@ def is_relational(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 else:
                     break
 
+    if state == 1 and forward == len(string):
+        return forward, Token("T_ROp_L", f"{string[:forward]}")
+
+    if state == 2 and forward == len(string):
+        return forward, Token("T_ROp_G", f"{string[:forward]}")
+
     return 0, None
 
 
