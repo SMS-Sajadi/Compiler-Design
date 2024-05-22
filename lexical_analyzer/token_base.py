@@ -4,7 +4,6 @@
     should not be used directly.
     (c) 2024|1403
 """
-import codecs
 
 
 class Token:
