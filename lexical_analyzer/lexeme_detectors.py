@@ -199,7 +199,7 @@ def is_whitespace(string: str) -> Tuple[int, int, Token] | Tuple[int, int, None]
     if forward == 0:
         return 0, 0, None
 
-    return forward, new_line, Token("T_Whitespace", f"{string[:forward]}")
+    return forward, new_line, Token("T_Whitespace", f"{repr(string[:forward])}")
 
 
 def is_id(string: str) -> Tuple[int, Token] | Tuple[int, None]:
@@ -240,7 +240,7 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     """
     forward = 0
     state = 0
-    while state == 3 or forward < len(string):
+    while state == 2 or forward < len(string):
         match state:
             case 0:
                 if string[forward].isdigit():
@@ -248,26 +248,16 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     forward += 1
                     continue
 
-                if string[forward] == '-' or string[forward] == '+':
-                    state = 2
-                    forward += 1
-                    continue
-
                 break
             case 1:
                 if not string[forward].isdigit():
-                    state = 3
+                    state = 2
                 else:
                     forward += 1
 
                 if forward == len(string):
-                    state = 3
+                    state = 2
             case 2:
-                if not string[forward].isdigit():
-                    break
-                state = 1
-                forward += 1
-            case 3:
                 return forward, Token("T_Decimal", f"{string[:forward]}")
 
     return 0, None
@@ -367,13 +357,17 @@ def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 3
                     continue
 
-                elif string[forward] == '\\':
+                if string[forward] == '\\':
                     forward += 1
                     state = 2
                     continue
 
-                state = 3
-                forward += 1
+                elif string[forward] != '\'':
+                    state = 3
+                    forward += 1
+                    continue
+
+                break
             case 2:
                 if string[forward] == '\'':
                     break
