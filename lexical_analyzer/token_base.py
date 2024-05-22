@@ -59,4 +59,4 @@ class Token:
         self.inline_index = inline_index
 
     def __str__(self) -> str:
-        return f"""{self.index}: {self.attribute if self.type != "T_Whitespace" else "whitespace"} -> {self.type}"""
+        return f"""{self.index}: {self.attribute} -> {self.type}"""

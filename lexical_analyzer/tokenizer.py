@@ -18,12 +18,11 @@ def tokenize(program: str) -> List[Token]:
     """
     tokens: List[Token] = []
 
-    # TODO: Set to 0
     lexeme_begin: int = 0
     line: int = 1
     inline_index: int = 0
     while lexeme_begin < len(program):
-        max_forward: int = 0  # TODO: set it to 0
+        max_forward: int = 0
         final_token: Token | None = None
 
         forward, new_lines, token = ld.is_whitespace(program[lexeme_begin:])
