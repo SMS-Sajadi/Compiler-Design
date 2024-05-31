@@ -6,7 +6,9 @@
 import argparse
 from argparse import ArgumentParser
 from lexical_analyzer.tokenizer import tokenize
+from lexical_analyzer.comment_ws_remover import remove
 from token_printer import print_tokens, write_to_file
+from syntax_analyzer.parser import parse
 
 
 def main(source, output, debug=False, with_ws=False):
@@ -22,6 +24,10 @@ def main(source, output, debug=False, with_ws=False):
     tokens = tokenize(program)
 
     write_to_file(tokens, filename=output, with_ws_print=with_ws)
+
+    tokens = remove(tokens)
+    tree = parse(tokens)
+    print(tree.show(stdout=False))
 
     if debug:
         print_tokens(tokens, with_ws_print=with_ws)
