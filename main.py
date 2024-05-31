@@ -27,7 +27,7 @@ def main(source, output, debug=False, with_ws=False):
 
     tokens = remove(tokens)
     tree = parse(tokens)
-    print(tree.show(stdout=False))
+    # print(tree.show(stdout=False))
 
     if debug:
         print_tokens(tokens, with_ws_print=with_ws)
