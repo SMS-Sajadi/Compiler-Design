@@ -17,7 +17,6 @@ def main(source, output, debug=False, with_ws=False):
     :param with_ws: this flag is used for print mode of debug.
     :return:
     """
-    # TODO: Fix reading from file
     with open(source, "r") as file:
         program = file.read()
     tokens = tokenize(program)
