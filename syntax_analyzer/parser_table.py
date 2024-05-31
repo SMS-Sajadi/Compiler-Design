@@ -44,6 +44,9 @@ M = {
         'T_Comma': ['epsilon'],
         'T_RP': ['epsilon'],
     },
+    'Stmts': {
+        'T_RC': ['epsilon'],
+    }
     # TODO: Continue to Infinity!
 }
 
@@ -53,5 +56,5 @@ def get_table():
     This function is used to generate the syntax analyzer table.
     :return: The syntax analyzer table.
     """
-    
+
     return M
