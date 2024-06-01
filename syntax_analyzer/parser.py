@@ -36,7 +36,7 @@ def parse(tokens: List[Token]) -> Tree:
             else:
                 raise TypeError
         else:
-            body = table[top_of_stack][tokens[token_idx].type]
+            body = table[top_of_stack][tokens[token_idx].type].copy()
             temp = []
             for _ in body:
                 tree.create_node(_, ident, parent=top_of_identifier)
