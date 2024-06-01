@@ -8,10 +8,10 @@ from typing import List
 from syntax_analyzer.parser_table import get_table
 from lexical_analyzer.token_base import Token
 from treelib import Tree
-from anytree import Node, RenderTree
+from anytree import Node
 
 
-def parse(tokens: List[Token]) -> Tree:
+def parse(tokens: List[Token]) -> Node:
     """
     This is the main parsing function.
     :return:
@@ -52,7 +52,4 @@ def parse(tokens: List[Token]) -> Tree:
 
         top_of_stack: str = stack.pop()
 
-    for pre, fill, node in RenderTree(tree2):
-        print("%s%s" % (pre, node.name))
-
-    return tree
+    return tree2

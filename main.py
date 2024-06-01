@@ -9,9 +9,10 @@ from lexical_analyzer.tokenizer import tokenize
 from lexical_analyzer.comment_ws_remover import remove
 from token_printer import print_tokens, write_to_file
 from syntax_analyzer.parser import parse
+from tree_printer import print_tree
 
 
-def main(source, output, debug=False, with_ws=False):
+def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_print=False):
     """
     This is the main implementation of the PL Language Compiler.
     :param source: this is address of the source file.
@@ -27,10 +28,16 @@ def main(source, output, debug=False, with_ws=False):
 
     tokens = remove(tokens)
     tree = parse(tokens)
+
+
+
+    # TODO: Remove treelib
     # print(tree.show(stdout=False))
 
     if debug:
         print_tokens(tokens, with_ws_print=with_ws)
+    if tree_print:
+        print_tree(tree, graphic_print=graphic_print)
 
 
 if __name__ == '__main__':
@@ -47,11 +54,17 @@ if __name__ == '__main__':
                         help='it will show debugging info')
     parser.add_argument('--with-ws', default=False, action=argparse.BooleanOptionalAction,
                         help='it will print the whitespaces')
+    parser.add_argument('--tree_printing', default=True, action=argparse.BooleanOptionalAction,
+                        help='it will print the syntax tree')
+    parser.add_argument('--graphic', default=True, action=argparse.BooleanOptionalAction,
+                        help='it will print the syntax tree graphically')
 
     args = parser.parse_args()
     SOURCE = args.source
     OUTPUT = args.output
     DEBUG = args.debug
     WITH_WS = args.with_ws
+    TREE_PRINTING = args.tree_printing
+    GRAPHIC = args.graphic
 
-    main(SOURCE, OUTPUT, DEBUG, WITH_WS)
+    main(SOURCE, OUTPUT, DEBUG, WITH_WS, TREE_PRINTING, GRAPHIC)
