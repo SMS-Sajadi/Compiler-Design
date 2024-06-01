@@ -34,7 +34,7 @@ def parse(tokens: List[Token]) -> Tree:
             if tokens[token_idx].type == top_of_stack:
                 token_idx += 1
             else:
-                raise TypeError
+                assert tokens[token_idx].type == top_of_stack, f'{top_of_stack} is not in the table!'
         else:
             body = table[top_of_stack][tokens[token_idx].type].copy()
             temp = []

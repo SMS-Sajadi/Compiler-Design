@@ -45,9 +45,50 @@ M = {
         'T_RP': ['epsilon'],
     },
     'Stmts': {
+        # First
+        'T_Int': ['stmt', 'Stmts'],
+        'T_Char': ['stmt', 'Stmts'],
+        'T_Bool': ['stmt', 'Stmts'],
+        # Follow
         'T_RC': ['epsilon'],
+    },
+    'Declaration': {
+        'T_Int': ['Type', 'Declarations', 'T_Semicolon'],
+        'T_Char': ['Type', 'Declarations', 'T_Semicolon'],
+        'T_Bool': ['Type', 'Declarations', 'T_Semicolon'],
+    },
+    'Declarations': {
+        'T_Id': ['var_declaration', 'Declaration_list'],
+        'T_Semicolon': ['epsilon'],
+    },
+    'Declaration_list': {
+        'T_Comma': ['T_Comma', 'var_declaration', 'Declaration_list'],
+        'T_Semicolon': ['epsilon'],
+    },
+    'var_declaration': {
+        'T_Id': ['mutable', 'Assign'],
+    },
+    'mutable': {
+        'T_Id': ['T_Id', 'bracket'],
+    },
+    'bracket': {
+        'T_LB': ['T_LB', 'Exp', 'T_RB', 'bracket'],
+        'T_Assign': ['epsilon'],
+        'T_Comma': ['epsilon'],
+        'T_Semicolon': ['epsilon'],
+    },
+    'Assign': {
+        'T_Assign': ['T_Assign', 'Exp'],
+        'T_Comma': ['epsilon'],
+        'T_Semicolon': ['epsilon'],
+    },
+    'stmt': {
+        'T_Int': ['Declaration'],
+        'T_Char': ['Declaration'],
+        'T_Bool': ['Declaration'],
     }
     # TODO: Continue to Infinity!
+    # TODO: Write const_num
 }
 
 
