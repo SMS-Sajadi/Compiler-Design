@@ -46,9 +46,9 @@ if __name__ == '__main__':
     and then the program will read the source code and compile it.
     """
     parser = ArgumentParser(description='PL Compiler')
-    parser.add_argument('--source', default='./lexical_analyzer/test/test.c', type=str,
+    parser.add_argument('--source', default='./test/test.c', type=str,
                         help='Input Program Address')
-    parser.add_argument('--output', default='./lexical_analyzer/test/result.txt', type=str,
+    parser.add_argument('--output', default='./test/result.txt', type=str,
                         help='Output Program Address')
     parser.add_argument('--debug', default=False, action=argparse.BooleanOptionalAction,
                         help='it will show debugging info')
