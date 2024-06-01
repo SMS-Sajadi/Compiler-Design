@@ -68,6 +68,16 @@ M = {
         # Follow
         'T_RC': ['epsilon'],
     },
+    'stmt': {
+        # First
+        'T_Int': ['Declaration'],
+        'T_Char': ['Declaration'],
+        'T_Bool': ['Declaration'],
+        'T_Break': ['other_stmt'],
+        'T_Continue': ['other_stmt'],
+        'T_Return': ['other_stmt'],
+        'T_Id': ['Assignment'],
+    },
     'Declaration': {
         # First
         'T_Int': ['Type', 'Declarations', 'T_Semicolon'],
@@ -109,20 +119,10 @@ M = {
         'T_Comma': ['epsilon'],
         'T_Semicolon': ['epsilon'],
     },
-    'stmt': {
-        # First
-        'T_Int': ['Declaration'],
-        'T_Char': ['Declaration'],
-        'T_Bool': ['Declaration'],
-        'T_Break': ['other_stmt'],
-        'T_Continue': ['other_stmt'],
-        'T_Return': ['other_stmt'],
-        'T_Id': ['Assignment'],
-    },
     'check_call': {
         # First
         'T_LP': ['call'],
-        'T_Assign': ['Assign', 'T_Semicolon'],
+        'T_Assign': ['Assign'],
     },
     'other_stmt': {
         # First
@@ -158,7 +158,7 @@ M = {
     },
     'Assignment': {
         # First
-        'T_Id': ['T_Id', 'check_call'],
+        'T_Id': ['T_Id', 'check_call', 'T_Semicolon'],
     },
     'Exp': {
         # First
