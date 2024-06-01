@@ -60,6 +60,9 @@ M = {
         'T_Int': ['stmt', 'Stmts'],
         'T_Char': ['stmt', 'Stmts'],
         'T_Bool': ['stmt', 'Stmts'],
+        'T_Break': ['stmt', 'Stmts'],
+        'T_Continue': ['stmt', 'Stmts'],
+        'T_Return': ['stmt', 'Stmts'],
         # Follow
         'T_RC': ['epsilon'],
     },
@@ -109,6 +112,15 @@ M = {
         'T_Int': ['Declaration'],
         'T_Char': ['Declaration'],
         'T_Bool': ['Declaration'],
+        'T_Break': ['other_stmt'],
+        'T_Continue': ['other_stmt'],
+        'T_Return': ['other_stmt'],
+    },
+    'other_stmt': {
+        # First
+        'T_Break': ['T_Break', 'T_Semicolon'],
+        'T_Continue': ['T_Continue', 'T_Semicolon'],
+        'T_Return': ['T_Return', 'Exp', 'T_Semicolon'],
     }
     # TODO: Continue to Infinity!
     # TODO: Write const_num
