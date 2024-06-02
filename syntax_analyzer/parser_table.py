@@ -127,6 +127,7 @@ M = {
         'T_Assign': ['epsilon'],
         'T_Comma': ['epsilon'],
         'T_Semicolon': ['epsilon'],
+        'T_RP': ['epsilon'],
     },
     'Assign': {
         # First
@@ -446,6 +447,8 @@ M = {
     'optional_assignment': {
         # First
         'T_Id': ['Assignment'],
+        'T_AOp_PL': ['unary_assignment'],
+        'T_AOp_MN': ['unary_assignment'],
         # Follow
         'T_RP': ['epsilon'],
     },
