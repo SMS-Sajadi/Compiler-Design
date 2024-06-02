@@ -31,9 +31,6 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
 
     write_tree_to_file(tree, address=output)
 
-    # TODO: Remove treelib
-    # print(tree.show(stdout=False))
-
     if debug:
         print_tokens(tokens, with_ws_print=with_ws)
     if tree_print:
