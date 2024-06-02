@@ -5,6 +5,7 @@
     (c) 2024|1403
 """
 from anytree import Node, RenderTree
+from anytree.exporter import UniqueDotExporter
 
 
 def print_tree(tree: Node, *, graphic_print: bool =False) -> None:
@@ -15,8 +16,7 @@ def print_tree(tree: Node, *, graphic_print: bool =False) -> None:
     :return:
     """
     if graphic_print:
-        # TODO: fix graphic printing
-        pass
+        UniqueDotExporter(tree).to_picture("./test/syntax_tree_res.png")
 
     for pre, fill, node in RenderTree(tree):
         print("%s%s" % (pre, node.name))
