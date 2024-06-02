@@ -7,7 +7,7 @@
 from typing import List
 from syntax_analyzer.parser_table import get_table
 from lexical_analyzer.token_base import Token
-from anytree import Node
+from syntax_analyzer.special_node import Node
 
 
 def parse(tokens: List[Token]) -> Node:
@@ -30,6 +30,7 @@ def parse(tokens: List[Token]) -> Node:
 
         if top_of_stack[:2] == 'T_':
             if tokens[token_idx].type == top_of_stack:
+                top_of_tree.value = tokens[token_idx].attribute
                 token_idx += 1
             else:
                 assert tokens[token_idx].type == top_of_stack, f'{top_of_stack} is not in the table!'
@@ -37,7 +38,8 @@ def parse(tokens: List[Token]) -> Node:
             body = table[top_of_stack][tokens[token_idx].type].copy()
             temp = []
             for _ in body:
-                temp.append(Node(_, parent=top_of_tree))
+                node = Node(_, parent=top_of_tree)
+                temp.append(node)
 
             for _ in range(len(body) - 1, -1, -1):
                 if body[_] == 'epsilon':
