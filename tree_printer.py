@@ -4,8 +4,9 @@
     should not be used directly.
     (c) 2024|1403
 """
-from anytree import Node, RenderTree
+from anytree import RenderTree
 from anytree.exporter import UniqueDotExporter
+from syntax_analyzer.special_node import Node
 
 
 def print_tree(tree: Node, *, address: str, graphic_print: bool =False) -> None:
