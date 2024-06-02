@@ -16,7 +16,10 @@ def print_tree(tree: Node, *, graphic_print: bool =False) -> None:
     :return:
     """
     if graphic_print:
-        UniqueDotExporter(tree).to_picture("./test/syntax_tree_res.png")
+        try:
+            UniqueDotExporter(tree).to_picture("./test/syntax_tree_res.png")
+        except Exception as e:
+            print('\033[91m' + f'You need to install graphviz and add it to your system path!')
 
     for pre, fill, node in RenderTree(tree):
         print("%s%s" % (pre, node.name))
