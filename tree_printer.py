@@ -23,7 +23,8 @@ def print_tree(tree: Node, *, address: str, graphic_print: bool =False) -> None:
             print('\033[91m' + f'You need to install graphviz and add it to your system path!')
 
     for pre, fill, node in RenderTree(tree):
-        print("%s%s" % (pre, node.name))
+        tree_str = u"%s%s" % (pre, node.name)
+        print(tree_str, node.value)
 
 
 def write_tree_to_file(tree: Node, *, address: str) -> None:
@@ -35,4 +36,4 @@ def write_tree_to_file(tree: Node, *, address: str) -> None:
     """
     with open(address + '/syntax_tree.txt', 'w', encoding="utf-8") as file:
         for pre, fill, node in RenderTree(tree):
-            file.write("%s%s\n" % (pre, node.name))
+            file.write("%s%s %s\n" % (pre, node.name, node.value))
