@@ -67,6 +67,7 @@ M = {
         'T_Id': ['stmt', 'Stmts'],
         'T_For': ['stmt', 'Stmts'],
         'T_If': ['stmt', 'Stmts'],
+        'T_Print': ['stmt', 'Stmts'],
         # Follow
         'T_RC': ['epsilon'],
     },
@@ -81,6 +82,7 @@ M = {
         'T_Id': ['Assignment', 'T_Semicolon'],
         'T_For': ['for_statement'],
         'T_If': ['if_statement'],
+        'T_Print': ['print_statement', 'T_Semicolon'],
     },
     'Declaration': {
         # First
@@ -455,6 +457,7 @@ M = {
         'T_Id': ['epsilon'],
         'T_For': ['epsilon'],
         'T_If': ['epsilon'],
+        'T_Print': ['epsilon'],
         'T_RC': ['epsilon'],
     },
     'check_if': {
@@ -465,11 +468,14 @@ M = {
     'statement': {
         # First
         'T_LC': ['T_LC', 'Stmts', 'T_RC'],
+    },
+    'print_statement': {
+        # First
+        'T_Print': ['T_Print', 'T_LP', 'Args', 'T_RP'],
     }
     # TODO: Continue to Infinity!
     # TODO: Complete the Stmts ans stmt
     # TODO: Check Semicolons
-    # TODO: ADD Print
     # TODO: ADD ++ and -- statements (optional)
 }
 
