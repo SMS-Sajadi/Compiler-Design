@@ -23,14 +23,14 @@ def print_tokens(tokens: List[Token], *, with_ws_print: bool =True) -> None:
                 print(token)
 
 
-def write_to_file(tokens: List[Token], *, filename: str, with_ws_print: bool=True) -> None:
+def write_to_file(tokens: List[Token], *, address: str, with_ws_print: bool=True) -> None:
     """
     This Function will write the tokens of lexical analyzer to a file.
     :param tokens: List of tokens.
-    :param filename: Address of output file.
+    :param address: Address of output Directory.
     :return:
     """
-    with open(filename, 'w') as file:
+    with open(address + '/tokens.txt', 'w') as file:
         for token in tokens:
             if with_ws_print:
                 file.write(str(token) + '\n')

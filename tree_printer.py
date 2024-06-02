@@ -8,16 +8,17 @@ from anytree import Node, RenderTree
 from anytree.exporter import UniqueDotExporter
 
 
-def print_tree(tree: Node, *, graphic_print: bool =False) -> None:
+def print_tree(tree: Node, *, address: str, graphic_print: bool =False) -> None:
     """
     Print a tree in a pretty way.
     :param tree: The tree to be printed.
+    :param address: The address of the output directory.
     :param graphic_print: Print graphics.
     :return:
     """
     if graphic_print:
         try:
-            UniqueDotExporter(tree).to_picture("./test/syntax_tree_res.png")
+            UniqueDotExporter(tree).to_picture(address + "/syntax_tree_res.png")
         except Exception as e:
             print('\033[91m' + f'You need to install graphviz and add it to your system path!')
 

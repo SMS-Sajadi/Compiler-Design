@@ -24,7 +24,7 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
         program = file.read()
     tokens = tokenize(program)
 
-    write_to_file(tokens, filename=output, with_ws_print=with_ws)
+    write_to_file(tokens, address=output, with_ws_print=with_ws)
 
     tokens = remove(tokens)
     tree = parse(tokens)
@@ -37,7 +37,7 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
     if debug:
         print_tokens(tokens, with_ws_print=with_ws)
     if tree_print:
-        print_tree(tree, graphic_print=graphic_print)
+        print_tree(tree, address=output, graphic_print=graphic_print)
 
 
 if __name__ == '__main__':
@@ -48,11 +48,11 @@ if __name__ == '__main__':
     parser = ArgumentParser(description='PL Compiler')
     parser.add_argument('--source', default='./test/test.c', type=str,
                         help='Input Program Address')
-    parser.add_argument('--output', default='./test/result.txt', type=str,
-                        help='Output Program Address')
+    parser.add_argument('--output', default='./test/output', type=str,
+                        help='Program Output Directory Address')
     parser.add_argument('--debug', default=False, action=argparse.BooleanOptionalAction,
                         help='it will show debugging info')
-    parser.add_argument('--with-ws', default=False, action=argparse.BooleanOptionalAction,
+    parser.add_argument('--with-ws', default=True, action=argparse.BooleanOptionalAction,
                         help='it will print the whitespaces')
     parser.add_argument('--tree_printing', default=True, action=argparse.BooleanOptionalAction,
                         help='it will print the syntax tree')
