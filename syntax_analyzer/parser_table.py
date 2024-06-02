@@ -55,6 +55,8 @@ M = {
         # Follow
         'T_Comma': ['epsilon'],
         'T_RP': ['epsilon'],
+        'T_Assign': ['epsilon'],
+        'T_Semicolon': ['epsilon'],
     },
     'Stmts': {
         # First
@@ -104,7 +106,11 @@ M = {
     },
     'var_declaration': {
         # First
-        'T_Id': ['mutable', 'Assign'],
+        'T_Id': ['declare_mutable', 'Assign'],
+    },
+    'declare_mutable': {
+        # First
+        'T_Id': ['T_Id', 'const_bracket'],
     },
     'mutable': {
         # First
