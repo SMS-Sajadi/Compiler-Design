@@ -70,6 +70,8 @@ M = {
         'T_For': ['stmt', 'Stmts'],
         'T_If': ['stmt', 'Stmts'],
         'T_Print': ['stmt', 'Stmts'],
+        'T_AOp_PL': ['stmt', 'Stmts'],
+        'T_AOp_MN': ['stmt', 'Stmts'],
         # Follow
         'T_RC': ['epsilon'],
     },
@@ -85,6 +87,8 @@ M = {
         'T_For': ['for_statement'],
         'T_If': ['if_statement'],
         'T_Print': ['print_statement', 'T_Semicolon'],
+        'T_AOp_PL': ['unary_assignment', 'T_Semicolon'],
+        'T_AOp_MN': ['unary_assignment', 'T_Semicolon'],
     },
     'Declaration': {
         # First
@@ -464,6 +468,8 @@ M = {
         'T_For': ['epsilon'],
         'T_If': ['epsilon'],
         'T_Print': ['epsilon'],
+        'T_AOp_PL': ['epsilon'],
+        'T_AOp_MN': ['epsilon'],
         'T_RC': ['epsilon'],
     },
     'check_if': {
@@ -478,11 +484,15 @@ M = {
     'print_statement': {
         # First
         'T_Print': ['T_Print', 'T_LP', 'Args', 'T_RP'],
+    },
+    'unary_assignment': {
+        # First
+        'T_AOp_PL': ['T_AOp_PL', 'T_AOp_PL', 'mutable'],
+        'T_AOp_MN': ['T_AOp_MN', 'T_AOp_MN', 'mutable'],
     }
     # TODO: Continue to Infinity!
     # TODO: Complete the Stmts ans stmt
     # TODO: Check Semicolons
-    # TODO: ADD ++ and -- statements (optional)
 }
 
 
