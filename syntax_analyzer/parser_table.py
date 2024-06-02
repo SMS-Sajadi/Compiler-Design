@@ -66,6 +66,7 @@ M = {
         'T_Return': ['stmt', 'Stmts'],
         'T_Id': ['stmt', 'Stmts'],
         'T_For': ['stmt', 'Stmts'],
+        'T_If': ['stmt', 'Stmts'],
         # Follow
         'T_RC': ['epsilon'],
     },
@@ -79,6 +80,7 @@ M = {
         'T_Return': ['other_stmt'],
         'T_Id': ['Assignment', 'T_Semicolon'],
         'T_For': ['for_statement'],
+        'T_If': ['if_statement'],
     },
     'Declaration': {
         # First
@@ -435,11 +437,40 @@ M = {
         # Follow
         'T_RP': ['epsilon'],
     },
+    'if_statement': {
+        # First
+        'T_If': ['T_If', 'T_LP', 'Exp', 'T_RP', 'T_LC', 'Stmts', 'T_RC', 'else_if'],
+    },
+    'else_if': {
+        # First
+        'T_Else': ['T_Else', 'check_if'],
+        # Follow
+        # TODO: Complete, First(Stmts) + Follow(Stmts)
+        'T_Int': ['epsilon'],
+        'T_Char': ['epsilon'],
+        'T_Bool': ['epsilon'],
+        'T_Break': ['epsilon'],
+        'T_Continue': ['epsilon'],
+        'T_Return': ['epsilon'],
+        'T_Id': ['epsilon'],
+        'T_For': ['epsilon'],
+        'T_If': ['epsilon'],
+        'T_RC': ['epsilon'],
+    },
+    'check_if': {
+        # First
+        'T_If': ['if_statement'],
+        'T_LC': ['statement'],
+    },
+    'statement': {
+        # First
+        'T_LC': ['T_LC', 'Stmts', 'T_RC'],
+    }
     # TODO: Continue to Infinity!
     # TODO: Complete the Stmts ans stmt
     # TODO: Check Semicolons
-    # TODO: ADD IF
-    # TODO: ADD ++ and -- statements
+    # TODO: ADD Print
+    # TODO: ADD ++ and -- statements (optional)
 }
 
 
