@@ -65,24 +65,26 @@ M = {
         'T_Continue': ['stmt', 'Stmts'],
         'T_Return': ['stmt', 'Stmts'],
         'T_Id': ['stmt', 'Stmts'],
+        'T_For': ['stmt', 'Stmts'],
         # Follow
         'T_RC': ['epsilon'],
     },
     'stmt': {
         # First
-        'T_Int': ['Declaration'],
-        'T_Char': ['Declaration'],
-        'T_Bool': ['Declaration'],
+        'T_Int': ['Declaration', 'T_Semicolon'],
+        'T_Char': ['Declaration', 'T_Semicolon'],
+        'T_Bool': ['Declaration', 'T_Semicolon'],
         'T_Break': ['other_stmt'],
         'T_Continue': ['other_stmt'],
         'T_Return': ['other_stmt'],
-        'T_Id': ['Assignment'],
+        'T_Id': ['Assignment', 'T_Semicolon'],
+        'T_For': ['for_statement'],
     },
     'Declaration': {
         # First
-        'T_Int': ['Type', 'Declarations', 'T_Semicolon'],
-        'T_Char': ['Type', 'Declarations', 'T_Semicolon'],
-        'T_Bool': ['Type', 'Declarations', 'T_Semicolon'],
+        'T_Int': ['Type', 'Declarations'],
+        'T_Char': ['Type', 'Declarations'],
+        'T_Bool': ['Type', 'Declarations'],
     },
     'Declarations': {
         # First
@@ -158,7 +160,7 @@ M = {
     },
     'Assignment': {
         # First
-        'T_Id': ['T_Id', 'check_call', 'T_Semicolon'],
+        'T_Id': ['T_Id', 'check_call'],
     },
     'Exp': {
         # First
@@ -389,16 +391,55 @@ M = {
         'T_AOp_MN': ['T_AOp_MN', 'Exp'],
     },
     'const': {
+        # First
         'T_Character': ['T_Character'],
         'T_String': ['T_String'],
         'T_True': ['T_True'],
         'T_False': ['T_False'],
         'T_Decimal': ['T_Decimal'],
         'T_Hexadecimal': ['T_Hexadecimal'],
-    }
+    },
+    'for_statement': {
+        # First
+        'T_For': ['T_For', 'T_LP', 'pre_loop', 'T_Semicolon', 'optional_expr', 'T_Semicolon', 'optional_assignment',
+                  'T_RP', 'T_LC', 'Stmts', 'T_RC'],
+    },
+    'pre_loop': {
+        # First
+        'T_Int': ['Declaration'],
+        'T_Char': ['Declaration'],
+        'T_Bool': ['Declaration'],
+        'T_Id': ['Assignment'],
+        # Follow
+        'T_Semicolon': ['epsilon'],
+    },
+    'optional_expr': {
+        # First
+        'T_LOp_NOT': ['Exp'],
+        'T_Id': ['Exp'],
+        'T_LP': ['Exp'],
+        'T_Character': ['Exp'],
+        'T_String': ['Exp'],
+        'T_True': ['Exp'],
+        'T_False': ['Exp'],
+        'T_Decimal': ['Exp'],
+        'T_Hexadecimal': ['Exp'],
+        'T_AOp_PL': ['Exp'],
+        'T_AOp_MN': ['Exp'],
+        # Follow
+        'T_Semicolon': ['epsilon'],
+    },
+    'optional_assignment': {
+        # First
+        'T_Id': ['Assignment'],
+        # Follow
+        'T_RP': ['epsilon'],
+    },
     # TODO: Continue to Infinity!
     # TODO: Complete the Stmts ans stmt
     # TODO: Check Semicolons
+    # TODO: ADD IF
+    # TODO: ADD ++ and -- statements
 }
 
 
