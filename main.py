@@ -9,7 +9,7 @@ from lexical_analyzer.tokenizer import tokenize
 from lexical_analyzer.comment_ws_remover import remove
 from token_printer import print_tokens, write_to_file
 from syntax_analyzer.parser import parse
-from tree_printer import print_tree
+from tree_printer import print_tree, write_tree_to_file
 
 
 def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_print=False):
@@ -29,7 +29,7 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
     tokens = remove(tokens)
     tree = parse(tokens)
 
-
+    write_tree_to_file(tree, address=output)
 
     # TODO: Remove treelib
     # print(tree.show(stdout=False))

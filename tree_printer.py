@@ -24,3 +24,15 @@ def print_tree(tree: Node, *, address: str, graphic_print: bool =False) -> None:
 
     for pre, fill, node in RenderTree(tree):
         print("%s%s" % (pre, node.name))
+
+
+def write_tree_to_file(tree: Node, *, address: str) -> None:
+    """
+    Write a tree in a pretty way to the address.
+    :param tree: The tree to be printed.
+    :param address: The address of the output directory.
+    :return:
+    """
+    with open(address + '/syntax_tree.txt', 'w', encoding="utf-8") as file:
+        for pre, fill, node in RenderTree(tree):
+            file.write("%s%s\n" % (pre, node.name))
