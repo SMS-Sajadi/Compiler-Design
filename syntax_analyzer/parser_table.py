@@ -324,6 +324,7 @@ M = {
         'T_Hexadecimal': ['factor', 'E'],
         'T_AOp_PL': ['factor', 'E'],
         'T_AOp_MN': ['factor', 'E'],
+        'T_LOp_NOT': ['factor', 'E'],
     },
     'E': {
         # First
@@ -363,6 +364,8 @@ M = {
         # # For +/-(exp)
         'T_AOp_PL': ['immutable'],
         'T_AOp_MN': ['immutable'],
+        # # For !Exp
+        'T_LOp_NOT': ['immutable'],
         'T_Id': ['T_Id', 'mutable_or_function_call'],
     },
     'mutable_or_function_call': {
@@ -404,6 +407,8 @@ M = {
         # # For +/-op
         'T_AOp_PL': ['T_AOp_PL', 'Exp'],
         'T_AOp_MN': ['T_AOp_MN', 'Exp'],
+        # # For !Exp
+        'T_LOp_NOT': ['T_LOp_NOT', 'Exp'],
     },
     'const': {
         # First
