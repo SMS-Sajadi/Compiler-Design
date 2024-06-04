@@ -60,7 +60,7 @@ def parse(tokens: List[Token]) -> Node:
 
                 stack.extend(reversed(body))
                 tree_stack.extend(reversed(temp))
-            except Exception as e:
+            except KeyError as e:
                 if token_idx + 1 == len(tokens):
                     exceptions.append(
                         raise_error_end(tokens, token_idx, top_of_stack)
