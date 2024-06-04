@@ -9,6 +9,7 @@ from lexical_analyzer.tokenizer import tokenize
 from lexical_analyzer.comment_ws_remover import remove
 from token_printer import print_tokens, write_to_file
 from syntax_analyzer.parser import parse
+from syntax_analyzer.error_handlers import set_program
 from tree_printer import print_tree, write_tree_to_file
 
 
@@ -26,6 +27,7 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
 
     write_to_file(tokens, address=output, with_ws_print=with_ws)
 
+    set_program(program)
     tokens = remove(tokens)
     tree = parse(tokens)
 
