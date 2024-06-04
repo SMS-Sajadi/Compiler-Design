@@ -132,6 +132,11 @@ M = {
     'Assign': {
         # First
         'T_Assign': ['T_Assign', 'Exp'],
+        'T_AOp_PL': ['T_AOp_PL', 'T_Assign', 'Exp'],
+        'T_AOp_MN': ['T_AOp_MN', 'T_Assign', 'Exp'],
+        'T_AOp_ML': ['T_AOp_ML', 'T_Assign', 'Exp'],
+        'T_AOp_DV': ['T_AOp_DV', 'T_Assign', 'Exp'],
+        'T_AOp_RM': ['T_AOp_RM', 'T_Assign', 'Exp'],
         # Follow
         'T_Comma': ['epsilon'],
         'T_Semicolon': ['epsilon'],
@@ -140,6 +145,11 @@ M = {
         # First
         'T_LP': ['call'],
         'T_Assign': ['Assign'],
+        'T_AOp_PL': ['Assign'],
+        'T_AOp_MN': ['Assign'],
+        'T_AOp_ML': ['Assign'],
+        'T_AOp_DV': ['Assign'],
+        'T_AOp_RM': ['Assign'],
     },
     'other_stmt': {
         # First
