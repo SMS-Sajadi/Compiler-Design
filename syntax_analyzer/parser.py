@@ -23,31 +23,40 @@ def parse(tokens: List[Token]) -> Node:
     token_idx: int = 0
     table = get_table()
 
-    tree_stack = [tree]
+    tree_stack = ['$', tree]
     top_of_stack: str = stack.pop()
+    top_of_tree = tree_stack.pop()
+    is_error_seen: bool = False
 
     exceptions: List[Exception] = []
 
     while top_of_stack != '$':
-        top_of_tree = tree_stack.pop()
-
-        if top_of_stack == 'synch':
-            top_of_stack = stack.pop()
-            exceptions.append(
-                raise_error_synch(tokens, token_idx, top_of_stack)
-            )
+        # if top_of_stack == 'synch':
+        #     top_of_stack = stack.pop()
+        #     exceptions.append(
+        #         raise_error_synch(tokens, token_idx, top_of_stack)
+        #     )
 
         if top_of_stack[:2] == 'T_':
             if tokens[token_idx].type == top_of_stack:
                 top_of_tree.value = tokens[token_idx].attribute
                 token_idx += 1
             else:
+                is_error_seen = True
                 exceptions.append(
                     raise_error_suggest(tokens[token_idx - 1], top_of_stack)
                 )
         else:
             try:
                 body = table[top_of_stack][tokens[token_idx].type].copy()
+                if 'synch' in body:
+                    is_error_seen = True
+                    exceptions.append(
+                        raise_error_synch(tokens, token_idx, top_of_stack)
+                    )
+                    top_of_stack = stack.pop()
+                    continue
+
                 temp = []
                 for _ in body:
                     node = Node(_, parent=top_of_tree)
@@ -61,6 +70,7 @@ def parse(tokens: List[Token]) -> Node:
                 stack.extend(reversed(body))
                 tree_stack.extend(reversed(temp))
             except KeyError as e:
+                is_error_seen = True
                 if token_idx + 1 == len(tokens):
                     exceptions.append(
                         raise_error_end(tokens, token_idx, top_of_stack)
@@ -73,8 +83,10 @@ def parse(tokens: List[Token]) -> Node:
                 continue
 
         top_of_stack: str = stack.pop()
+        if not is_error_seen:
+            top_of_tree = tree_stack.pop()
 
     if len(exceptions) != 0:
-        raise ExceptionGroup(f'We have Found at least {len(exceptions)} erros in your code:', exceptions)
+        raise ExceptionGroup(f'We have Found at least {len(exceptions)} Errors in your code:', exceptions)
 
     return tree
