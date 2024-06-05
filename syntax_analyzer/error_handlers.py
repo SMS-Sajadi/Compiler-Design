@@ -16,12 +16,13 @@ def raise_error_empty_table(tokens: List[Token], token_idx: int, top_of_stack: s
     :return:
     """
     token = tokens[token_idx]
-    code_line = PROGRAM.splitlines()[token.line - 1]
+    code_line = PROGRAM.splitlines()[token.line - 1].strip()
 
     exception = SyntaxError(f"Error Found in line {token.line - 1}, We Found Nothing in the table to match\n"
                              f"{code_line}\n"
-                             f"{' ' * (token.inline_index + len(tokens[token_idx - 1].attribute) + 1)}^~~~~~~~~~~\n"
-                             f"We Suggests To Use {top_of_stack} instead of {token.attribute}")
+                             f"{' ' * (token.inline_index + 1)}^~~~~~~~~~~\n"
+                             f"We Suggests To Use {top_of_stack}\n"
+                             f"OR Consider Removing {token.attribute} instead")
     return exception
 
 
@@ -33,11 +34,12 @@ def raise_error_synch(tokens: List[Token], token_idx: int, top_of_stack: str) ->
     :return:
     """
     token = tokens[token_idx - 1]
-    code_line = PROGRAM.splitlines()[token.line - 1]
+    code_line = PROGRAM.splitlines()[token.line - 1].strip()
 
     exception = SyntaxError(f"Error Found in line {token.line}, We Found Synch in the table\n"
                              f"{code_line}\n"
-                             f"{' ' * (token.inline_index + len(tokens[token_idx].attribute) + 1)}^~~~~~~~~~~\n")
+                             f"{' ' * (token.inline_index + 1)}^~~~~~~~~~~\n"
+                             f"We Suggests To Use {top_of_stack} after {token.attribute}")
     return exception
 
 
@@ -49,11 +51,11 @@ def raise_error_end(tokens: List[Token], token_idx: int, top_of_stack: str) -> S
     :return:
     """
     token = tokens[token_idx - 1]
-    code_line = PROGRAM.splitlines()[token.line - 1]
+    code_line = PROGRAM.splitlines()[token.line - 1].strip()
 
     exception = SyntaxError(f"Error Found in line {token.line}\n"
                             f"{code_line}\n"
-                            f"{' ' * (token.inline_index + len(tokens[token_idx - 1].attribute) + 1)}^~~~~~~~~~~\n"
+                            f"{' ' * (token.inline_index + 1)}^~~~~~~~~~~\n"
                             f"You May Forgotten to close the curly-bracket!")
     return exception
 
@@ -65,12 +67,13 @@ def raise_error_suggest(token: Token, top_of_stack: str) -> SyntaxError:
     :param top_of_stack: The Part we are looking for
     :return:
     """
-    code_line = PROGRAM.splitlines()[token.line - 1]
+    code_line = PROGRAM.splitlines()[token.line - 1].strip()
 
     exception = SyntaxError(f"Error Found in line {token.line - 1}\n"
                              f"{code_line}\n"
                              f"{' ' * (token.inline_index + 1)}^~~~~~~~~~~\n"
-                             f"We Suggests To Use {top_of_stack}")
+                             f"We Suggests To replace {token.attribute} with {top_of_stack}\n"
+                             f"OR Add {top_of_stack}")
     return exception
 
 def set_program(program: str) -> None:

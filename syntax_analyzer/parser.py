@@ -27,6 +27,7 @@ def parse(tokens: List[Token]) -> Node:
     top_of_stack: str = stack.pop()
     top_of_tree = tree_stack.pop()
     is_error_seen: bool = False
+    is_synch_error: bool = False
 
     exceptions: List[Exception] = []
 
@@ -43,6 +44,7 @@ def parse(tokens: List[Token]) -> Node:
                 token_idx += 1
             else:
                 is_error_seen = True
+                is_synch_error = False
                 exceptions.append(
                     raise_error_suggest(tokens[token_idx - 1], top_of_stack)
                 )
@@ -51,9 +53,11 @@ def parse(tokens: List[Token]) -> Node:
                 body = table[top_of_stack][tokens[token_idx].type].copy()
                 if 'synch' in body:
                     is_error_seen = True
-                    exceptions.append(
-                        raise_error_synch(tokens, token_idx, top_of_stack)
-                    )
+                    if not is_synch_error:
+                        exceptions.append(
+                            raise_error_synch(tokens, token_idx, top_of_stack)
+                        )
+                    is_synch_error = True
                     top_of_stack = stack.pop()
                     continue
 
@@ -71,6 +75,7 @@ def parse(tokens: List[Token]) -> Node:
                 tree_stack.extend(reversed(temp))
             except KeyError as e:
                 is_error_seen = True
+                is_synch_error = False
                 if token_idx + 1 == len(tokens):
                     exceptions.append(
                         raise_error_end(tokens, token_idx, top_of_stack)
