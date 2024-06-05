@@ -18,7 +18,7 @@ def raise_error_empty_table(tokens: List[Token], token_idx: int, top_of_stack: s
     token = tokens[token_idx]
     code_line = PROGRAM.splitlines()[token.line - 1]
 
-    exception = SyntaxError(f"Error Found in line {token.line - 1}\n"
+    exception = SyntaxError(f"Error Found in line {token.line - 1}, We Found Nothing in the table to match\n"
                              f"{code_line}\n"
                              f"{' ' * (token.inline_index + len(tokens[token_idx - 1].attribute) + 1)}^~~~~~~~~~~\n"
                              f"We Suggests To Use {top_of_stack} instead of {token.attribute}")
@@ -35,7 +35,7 @@ def raise_error_synch(tokens: List[Token], token_idx: int, top_of_stack: str) ->
     token = tokens[token_idx - 1]
     code_line = PROGRAM.splitlines()[token.line - 1]
 
-    exception = SyntaxError(f"Error Found in line {token.line}\n"
+    exception = SyntaxError(f"Error Found in line {token.line}, We Found Synch in the table\n"
                              f"{code_line}\n"
                              f"{' ' * (token.inline_index + len(tokens[token_idx].attribute) + 1)}^~~~~~~~~~~\n")
     return exception
