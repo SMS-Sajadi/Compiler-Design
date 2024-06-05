@@ -64,11 +64,6 @@ M = {
         'T_RP': ['epsilon'],
         'T_Assign': ['epsilon'],
         'T_Semicolon': ['epsilon'],
-        'T_AOp_PL': ['epsilon'],
-        'T_AOp_MN': ['epsilon'],
-        'T_AOp_ML': ['epsilon'],
-        'T_AOp_DV': ['epsilon'],
-        'T_AOp_RM': ['epsilon'],
     },
     'Stmts': {
         # First
@@ -126,21 +121,23 @@ M = {
     },
     'var_declaration': {
         # First
-        'T_Id': ['declare_mutable', 'Assign'],
+        'T_Id': ['declare_mutable', 'Declaration_Assign'],
         # Error Handling
         'T_Comma': ['synch'],
         'T_Semicolon': ['synch'],
+    },
+    'Declaration_Assign': {
+        # First
+        'T_Assign': ['T_Assign', 'Exp'],
+        # Follow
+        'T_Comma': ['epsilon'],
+        'T_Semicolon': ['epsilon'],
     },
     'declare_mutable': {
         # First
         'T_Id': ['T_Id', 'const_bracket'],
         # Error Handling
         'T_Assign': ['synch'],
-        'T_AOp_PL': ['synch'],
-        'T_AOp_MN': ['synch'],
-        'T_AOp_ML': ['synch'],
-        'T_AOp_DV': ['synch'],
-        'T_AOp_RM': ['synch'],
         'T_Comma': ['synch'],
         'T_Semicolon': ['synch'],
     },
@@ -155,8 +152,7 @@ M = {
         # First
         'T_LB': ['T_LB', 'Exp', 'T_RB', 'bracket'],
         # Follow
-        # TODO: Remove this line
-        # 'T_Assign': ['epsilon'],
+        'T_Assign': ['epsilon'],
         'T_Comma': ['epsilon'],
         'T_Semicolon': ['epsilon'],
         'T_RP': ['epsilon'],
@@ -184,13 +180,13 @@ M = {
         'T_AOp_DV': ['T_AOp_DV', 'T_Assign', 'Exp'],
         'T_AOp_RM': ['T_AOp_RM', 'T_Assign', 'Exp'],
         # Follow
-        'T_Comma': ['epsilon'],
         'T_Semicolon': ['epsilon'],
         'T_RP': ['epsilon'],
     },
     'check_call': {
         # First
         'T_LP': ['call'],
+        'T_LB': ['bracket', 'Assign'],
         'T_Assign': ['Assign'],
         'T_AOp_PL': ['Assign'],
         'T_AOp_MN': ['Assign'],
@@ -217,11 +213,6 @@ M = {
         'T_AOp_PL': ['synch'],
         'T_AOp_MN': ['synch'],
         'T_RC': ['synch'],
-    },
-    'function_call': {
-        # First
-        'T_Id': ['T_Id', 'T_LP', 'Args', 'T_RP'],
-        # TODO: Remove this
     },
     'Args': {
         # First
@@ -270,6 +261,18 @@ M = {
         'T_Semicolon': ['synch'],
         'T_RP': ['synch'],
         'T_RB': ['synch'],
+        # Came From immutable
+        # 'T_AOp_ML': ['synch'],
+        # 'T_AOp_DV': ['synch'],
+        # 'T_AOp_RM': ['synch'],
+        # 'T_ROp_L': ['synch'],
+        # 'T_ROp_G': ['synch'],
+        # 'T_ROp_LE': ['synch'],
+        # 'T_ROp_GE': ['synch'],
+        # 'T_ROp_NE': ['synch'],
+        # 'T_ROp_E': ['synch'],
+        # 'T_LOp_AND': ['synch'],
+        # 'T_LOp_OR': ['synch'],
     },
     'A': {
         # First
@@ -279,6 +282,17 @@ M = {
         'T_Comma': ['epsilon'],
         'T_RB': ['epsilon'],
         'T_RP': ['epsilon'],
+
+        # 'T_AOp_ML': ['epsilon'],
+        # 'T_AOp_DV': ['epsilon'],
+        # 'T_AOp_RM': ['epsilon'],
+        # 'T_ROp_L': ['epsilon'],
+        # 'T_ROp_G': ['epsilon'],
+        # 'T_ROp_LE': ['epsilon'],
+        # 'T_ROp_GE': ['epsilon'],
+        # 'T_ROp_NE': ['epsilon'],
+        # 'T_ROp_E': ['epsilon'],
+        # 'T_LOp_AND': ['epsilon'],
     },
     'and_expr': {
         # First
@@ -299,6 +313,17 @@ M = {
         'T_RP': ['synch'],
         'T_RB': ['synch'],
         'T_LOp_OR': ['synch'],
+
+        # 'T_AOp_ML': ['synch'],
+        # 'T_AOp_DV': ['synch'],
+        # 'T_AOp_RM': ['synch'],
+        # 'T_ROp_L': ['synch'],
+        # 'T_ROp_G': ['synch'],
+        # 'T_ROp_LE': ['synch'],
+        # 'T_ROp_GE': ['synch'],
+        # 'T_ROp_NE': ['synch'],
+        # 'T_ROp_E': ['synch'],
+        # 'T_LOp_AND': ['synch'],
     },
     'B': {
         # First
@@ -532,21 +557,21 @@ M = {
         'T_LOp_NOT': ['immutable'],
         'T_Id': ['T_Id', 'mutable_or_function_call'],
         # Error Handling
-        'T_Comma': ['synch'],
-        'T_Semicolon': ['synch'],
-        'T_RP': ['synch'],
-        'T_RB': ['synch'],
-        'T_LOp_OR': ['synch'],
-        'T_LOp_AND': ['synch'],
-        'T_ROp_L': ['synch'],
-        'T_ROp_G': ['synch'],
-        'T_ROp_LE': ['synch'],
-        'T_ROp_GE': ['synch'],
-        'T_ROp_NE': ['synch'],
-        'T_ROp_E': ['synch'],
-        'T_AOp_ML': ['synch'],
-        'T_AOp_DV': ['synch'],
-        'T_AOp_RM': ['synch'],
+        # 'T_Comma': ['synch'],
+        # 'T_Semicolon': ['synch'],
+        # 'T_RP': ['synch'],
+        # 'T_RB': ['synch'],
+        # 'T_LOp_OR': ['synch'],
+        # 'T_LOp_AND': ['synch'],
+        # 'T_ROp_L': ['synch'],
+        # 'T_ROp_G': ['synch'],
+        # 'T_ROp_LE': ['synch'],
+        # 'T_ROp_GE': ['synch'],
+        # 'T_ROp_NE': ['synch'],
+        # 'T_ROp_E': ['synch'],
+        # 'T_AOp_ML': ['synch'],
+        # 'T_AOp_DV': ['synch'],
+        # 'T_AOp_RM': ['synch'],
     },
     'mutable_or_function_call': {
         # First
@@ -603,8 +628,8 @@ M = {
         'T_Decimal': ['const'],
         'T_Hexadecimal': ['const'],
         # # For +/-op
-        'T_AOp_PL': ['T_AOp_PL', 'Exp'],
-        'T_AOp_MN': ['T_AOp_MN', 'Exp'],
+        'T_AOp_PL': ['T_AOp_PL', 'factor'],
+        'T_AOp_MN': ['T_AOp_MN', 'factor'],
         # # For !Exp
         'T_LOp_NOT': ['T_LOp_NOT', 'Exp'],
         # Error Handling
@@ -786,10 +811,6 @@ M = {
         'T_Semicolon': ['synch'],
         'T_RP': ['synch'],
     }
-    # TODO: Continue to Infinity!
-    # TODO: Complete the Stmts ans stmt
-    # TODO: Check Semicolons
-    # TODO: Check the Follow(immutable) that is in the Follow(Exp)
 }
 
 
