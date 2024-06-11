@@ -20,7 +20,7 @@ def raise_error_empty_table(tokens: List[Token], token_idx: int, top_of_stack: s
 
     exception = SyntaxError(f"Error Found in line {token.line - 1}, We Found Nothing in the table to match\n"
                              f"{code_line}\n"
-                             f"{' ' * (token.inline_index + 1)}^~~~~~~~~~~\n"
+                             f"{' ' * (token.inline_index)}^~~~~~~~~~~\n"
                              f"We Suggests To Use {top_of_stack}\n"
                              f"OR Consider Removing {token.attribute} instead")
     return exception
@@ -39,7 +39,8 @@ def raise_error_synch(tokens: List[Token], token_idx: int, top_of_stack: str) ->
     exception = SyntaxError(f"Error Found in line {token.line}, We Found Synch in the table\n"
                              f"{code_line}\n"
                              f"{' ' * (token.inline_index + 1)}^~~~~~~~~~~\n"
-                             f"We Suggests To Use {top_of_stack} after {token.attribute}")
+                             f"We Suggests To Use {top_of_stack} after {token.attribute}\n"
+                             f"OR You can remove {token.attribute}")
     return exception
 
 
@@ -75,6 +76,7 @@ def raise_error_suggest(token: Token, top_of_stack: str) -> SyntaxError:
                              f"We Suggests To replace {token.attribute} with {top_of_stack}\n"
                              f"OR Add {top_of_stack}")
     return exception
+
 
 def set_program(program: str) -> None:
     """
