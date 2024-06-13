@@ -32,6 +32,7 @@ M = {
         'T_Bool': ['T_Bool'],
         # Error Handling
         'T_Id': ['synch'],
+        'T_Semicolon': ['synch'],
     },
     'function_params': {
         # First
