@@ -11,9 +11,10 @@ from typing import List
 def raise_error_empty_table(tokens: List[Token], token_idx: int, top_of_stack: str) -> SyntaxError:
     """
     This function will create proper error base on token and stack when there was no key in table!
-    :param token: The token that error occurs by
-    :param top_of_stack: The Part we are looking for
-    :return:
+    :param tokens: list of tokens
+    :param token_idx: index of token
+    :param top_of_stack: top token of stack
+    :return: SyntaxError
     """
     token = tokens[token_idx]
     code_line = PROGRAM.splitlines()[token.line - 1].strip()
@@ -29,9 +30,9 @@ def raise_error_empty_table(tokens: List[Token], token_idx: int, top_of_stack: s
 def raise_error_synch(tokens: List[Token], token_idx: int, top_of_stack: str) -> SyntaxError:
     """
     This function will create proper error base on token and stack when there was no key in table!
-    :param token: The token that error occurs by
-    :param top_of_stack: The Part we are looking for
-    :return:
+    :param token_idx: index of token
+    :param top_of_stack: top token of stack
+    :return: SyntaxError
     """
     token = tokens[token_idx - 1]
     code_line = PROGRAM.splitlines()[token.line - 1].strip()
@@ -47,9 +48,9 @@ def raise_error_synch(tokens: List[Token], token_idx: int, top_of_stack: str) ->
 def raise_error_end(tokens: List[Token], token_idx: int, top_of_stack: str) -> SyntaxError:
     """
     This function will create proper error base on token and stack when there was no key in table!
-    :param token: The token that error occurs by
-    :param top_of_stack: The Part we are looking for
-    :return:
+    :param token_idx: index of token
+    :param top_of_stack: top token of stack
+    :return: SyntaxError
     """
     token = tokens[token_idx - 1]
     code_line = PROGRAM.splitlines()[token.line - 1].strip()
@@ -66,7 +67,7 @@ def raise_error_suggest(token: Token, top_of_stack: str) -> SyntaxError:
     This function will create proper error base on token and stack when there was no key in table!
     :param token: The token that error occurs by
     :param top_of_stack: The Part we are looking for
-    :return:
+    :return: SyntaxError
     """
     code_line = PROGRAM.splitlines()[token.line - 1].strip()
 
