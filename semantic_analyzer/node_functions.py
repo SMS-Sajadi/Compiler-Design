@@ -24,3 +24,11 @@ def add_function(self: Node):
 
 def set_function_attributes(self: Node):
     self.parent.func_name = self.siblings[1].value
+
+
+def check_main(self: Node):
+    for func in FUNCTIONS:
+        if func.name == 'main':
+            break
+    else:
+        raise Exception("No main function")
