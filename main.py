@@ -11,7 +11,7 @@ from token_printer import print_tokens, write_to_file
 from syntax_analyzer.parser import parse
 from syntax_analyzer.error_handlers import set_program
 from tree_printer import print_tree, write_tree_to_file
-
+from semantic_analyzer.syntax_directed_translation import check_code
 
 def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_print=False):
     """
@@ -29,14 +29,16 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
 
     set_program(program)
     tokens = remove(tokens)
-    tree = parse(tokens)
+    syntax_tree = parse(tokens)
 
-    write_tree_to_file(tree, address=output)
+    write_tree_to_file(syntax_tree, address=output)
+
+    check_code(syntax_tree)
 
     if debug:
         print_tokens(tokens, with_ws_print=with_ws)
     if tree_print:
-        print_tree(tree, address=output, graphic_print=graphic_print)
+        print_tree(syntax_tree, address=output, graphic_print=graphic_print)
 
 
 if __name__ == '__main__':
