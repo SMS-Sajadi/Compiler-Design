@@ -6,19 +6,18 @@
 """
 from typing import Final
 from syntax_analyzer.special_node import Node
-from semantic_analyzer.node_functions import add_function, set_function_attributes
+from semantic_analyzer.node_functions import *
 from copy import deepcopy
 
-add_function_node = Node('add_function', is_semantic=True)
-add_function_node.run = add_function
+add_function_node = Node('add_function', is_semantic=True, func=add_function)
+set_function_node = Node('set_function', is_semantic=True, func=set_function_attributes)
+check_main_node = Node('check_main', is_semantic=True, func=check_main)
 
-set_function_node = Node('set_function', is_semantic=True)
-set_function_node.run = set_function_attributes
 
 SDD: Final = {
     'Program': [
         ['function', add_function_node, 'Program'],
-        ['epsilon'],
+        ['epsilon', check_main_node],
     ],
     'function': [
         ['Type', 'T_Id', 'T_LP', 'function_params', 'T_RP', 'T_LC', 'Stmts', 'T_RC', set_function_node],
