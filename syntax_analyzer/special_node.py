@@ -8,12 +8,13 @@ from anytree import NodeMixin
 
 
 class Node(NodeMixin):  # Add Node feature
-    def __init__(self, name, value='', parent=None, children=None, is_semantic=False):
+    def __init__(self, name, value='', parent=None, children=None, is_semantic=False, func=None):
         super(Node, self).__init__()
         self.name = name
         self.value = value
         self.parent = parent
         self.is_semantic = is_semantic
+        self.run = func
         if children:  # set children only if given
             self.children = children
 
