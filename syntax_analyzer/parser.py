@@ -1,6 +1,6 @@
 """
     Here we will have the Base Parts of Parser.
-    This implementation is used for PL Language Compiler (PL) lexical analyzer, and
+    This implementation is used for PL Language Compiler (PL) syntax analyzer, and
     should not be used directly.
     (c) 2024|1403
 """
