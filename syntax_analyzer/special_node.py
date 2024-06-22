@@ -15,6 +15,8 @@ class Node(NodeMixin):  # Add Node feature
         self.parent = parent
         self.is_semantic = is_semantic
         self.run = func
+        self.ctype = None
+        self.base_type = None
         if children:  # set children only if given
             self.children = children
 
