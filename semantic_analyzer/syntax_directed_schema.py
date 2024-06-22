@@ -12,6 +12,15 @@ from copy import deepcopy
 add_function_node = Node('add_function', is_semantic=True, func=add_function)
 set_function_node = Node('set_function', is_semantic=True, func=set_function_attributes)
 check_main_node = Node('check_main', is_semantic=True, func=check_main)
+set_type_node = Node('set_type', is_semantic=True, func=set_type)
+set_declaration_expected_type_node = Node('set_declaration_expected_type', is_semantic=True,
+                                          func=set_declaration_expected_type)
+set_bracket_type_node = Node('set_bracket_type', is_semantic=True, func=set_bracket_type)
+set_bracket_type_end_node = Node('set_bracket_type_end', is_semantic=True, func=set_bracket_type_end)
+set_bracket_base_type_node = Node('set_bracket_base_type', is_semantic=True, func=set_bracket_base_type)
+set_declaration_var_node = Node('set_declaration_var', is_semantic=True, func=set_declaration_var)
+set_declaration_assign_node = Node('set_declaration_assign', is_semantic=True, func=set_declaration_assign)
+add_variable_node = Node('add_variable', is_semantic=True, func=add_variable)
 
 
 SDD: Final = {
@@ -23,9 +32,9 @@ SDD: Final = {
         ['Type', 'T_Id', 'T_LP', 'function_params', 'T_RP', 'T_LC', 'Stmts', 'T_RC', set_function_node],
     ],
     'Type': [
-        ['T_Int'],
-        ['T_Char'],
-        ['T_Bool'],
+        ['T_Int', set_type_node],
+        ['T_Char', set_type_node],
+        ['T_Bool', set_type_node],
     ],
     'function_params': [
         ['param', 'params_list'],
@@ -39,8 +48,8 @@ SDD: Final = {
         ['Type', 'T_Id', 'const_bracket'],
     ],
     'const_bracket': [
-        ['T_LB', 'const', 'T_RB', 'const_bracket'],
-        ['epsilon'],
+        ['T_LB', 'const', 'T_RB', 'const_bracket', set_bracket_type_node],
+        ['epsilon', set_bracket_type_end_node],
     ],
     'Stmts': [
         ['stmt', 'Stmts'],
@@ -56,7 +65,7 @@ SDD: Final = {
         ['unary_assignment', 'T_Semicolon'],
     ],
     'Declaration': [
-        ['Type', 'Declarations'],
+        ['Type', set_declaration_expected_type_node, 'Declarations'],
     ],
     'Declarations': [
         ['var_declaration', 'Declaration_list'],
@@ -67,14 +76,14 @@ SDD: Final = {
         ['epsilon'],
     ],
     'var_declaration': [
-        ['declare_mutable', 'Declaration_Assign'],
+        ['declare_mutable', 'Declaration_Assign', add_variable_node],
     ],
     'Declaration_Assign': [
-        ['T_Assign', 'Exp'],
-        ['epsilon'],
+        ['T_Assign', 'Exp', set_declaration_assign_node],
+        ['epsilon', set_declaration_assign_node],
     ],
     'declare_mutable': [
-        ['T_Id', 'const_bracket'],
+        ['T_Id', set_bracket_base_type_node, 'const_bracket', set_declaration_var_node],
     ],
     'mutable': [
         ['T_Id', 'bracket'],
@@ -249,4 +258,3 @@ def add_semantic_nodes(syntax_tree: Node):
     for node in syntax_tree.children:
         if not node.is_semantic and not node.is_leaf:
             add_semantic_nodes(node)
-
