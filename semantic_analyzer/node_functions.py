@@ -48,17 +48,22 @@ def set_declaration_expected_type(self: Node):
     self.siblings[1].base_type = self.siblings[0].ctype
 
 
+def set_var_declaration_expected_type(self: Node):
+    for node in self.siblings:
+        node.base_type = self.parent.base_type
+
+
 def set_bracket_type(self: Node):
     self.parent.ctype = f"array({self.siblings[1].value}, {self.siblings[3].ctype})"
     self.base_type = self.parent.base_type
 
 
 def set_bracket_type_end(self: Node):
-    self.parent.ctype = self.base_type
+    self.parent.ctype = self.parent.base_type
 
 
 def set_bracket_base_type(self: Node):
-    self.siblings[-1].base_type = self.parent.base_type
+    self.siblings[1].base_type = self.parent.base_type
 
 
 def set_declaration_var(self: Node):
@@ -74,8 +79,8 @@ def set_declaration_assign(self: Node):
 
 
 def add_variable(self: Node):
-    var_name = self.siblings[0].var_name
-    var_type = self.siblings[0].ctype
+    var_name = self.siblings[1].var_name
+    var_type = self.siblings[1].ctype
 
     for var in VARIABLES:
         if var.name == var_name:

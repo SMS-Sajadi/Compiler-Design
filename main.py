@@ -25,20 +25,19 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
         program = file.read()
     tokens = tokenize(program)
 
+    if debug:
+        print_tokens(tokens, with_ws_print=with_ws)
     write_to_file(tokens, address=output, with_ws_print=with_ws)
 
     set_program(program)
     tokens = remove(tokens)
     syntax_tree = parse(tokens)
 
+    if tree_print:
+        print_tree(syntax_tree, address=output, graphic_print=graphic_print)
     write_tree_to_file(syntax_tree, address=output)
 
     check_code(syntax_tree)
-
-    if debug:
-        print_tokens(tokens, with_ws_print=with_ws)
-    if tree_print:
-        print_tree(syntax_tree, address=output, graphic_print=graphic_print)
 
 
 if __name__ == '__main__':
@@ -55,7 +54,7 @@ if __name__ == '__main__':
                         help='it will show debugging info')
     parser.add_argument('--with-ws', default=True, action=argparse.BooleanOptionalAction,
                         help='it will print the whitespaces')
-    parser.add_argument('--tree_printing', default=True, action=argparse.BooleanOptionalAction,
+    parser.add_argument('--tree_printing', default=False, action=argparse.BooleanOptionalAction,
                         help='it will print the syntax tree')
     parser.add_argument('--graphic', default=True, action=argparse.BooleanOptionalAction,
                         help='it will print the syntax tree graphically')

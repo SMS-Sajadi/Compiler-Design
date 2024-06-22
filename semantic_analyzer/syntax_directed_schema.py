@@ -21,6 +21,8 @@ set_bracket_base_type_node = Node('set_bracket_base_type', is_semantic=True, fun
 set_declaration_var_node = Node('set_declaration_var', is_semantic=True, func=set_declaration_var)
 set_declaration_assign_node = Node('set_declaration_assign', is_semantic=True, func=set_declaration_assign)
 add_variable_node = Node('add_variable', is_semantic=True, func=add_variable)
+set_var_declaration_expected_type_node = Node('set_var_declaration_expected_type', is_semantic=True,
+                                              func=set_var_declaration_expected_type)
 
 
 SDD: Final = {
@@ -68,15 +70,15 @@ SDD: Final = {
         ['Type', set_declaration_expected_type_node, 'Declarations'],
     ],
     'Declarations': [
-        ['var_declaration', 'Declaration_list'],
+        [set_var_declaration_expected_type_node, 'var_declaration', 'Declaration_list'],
         ['epsilon'],
     ],
     'Declaration_list': [
-        ['T_Comma', 'var_declaration', 'Declaration_list'],
+        [set_var_declaration_expected_type_node, 'T_Comma', 'var_declaration', 'Declaration_list'],
         ['epsilon'],
     ],
     'var_declaration': [
-        ['declare_mutable', 'Declaration_Assign', add_variable_node],
+        [set_var_declaration_expected_type_node, 'declare_mutable', 'Declaration_Assign', add_variable_node],
     ],
     'Declaration_Assign': [
         ['T_Assign', 'Exp', set_declaration_assign_node],
@@ -249,7 +251,8 @@ SDD: Final = {
 def add_semantic_nodes(syntax_tree: Node):
     children = list(syntax_tree.children)
     for rule in SDD[syntax_tree.name]:
-        if children[0].name == rule[0]:
+        rule_index = 1 if isinstance(rule[0], Node) else 0
+        if children[0].name == rule[rule_index]:
             for idx, _ in enumerate(rule):
                 if isinstance(_, Node):
                     children.insert(idx, deepcopy(_))
