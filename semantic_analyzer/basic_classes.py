@@ -12,3 +12,9 @@ class Function:
         self.entries = []
         self.return_type = None
         self.has_return = False
+
+
+class Variable:
+    def __init__(self, name):
+        self.name = name
+        self.ctype = None
