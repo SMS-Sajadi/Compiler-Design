@@ -50,7 +50,7 @@ SDD: Final = {
         ['Type', 'T_Id', 'const_bracket'],
     ],
     'const_bracket': [
-        ['T_LB', 'const', 'T_RB', 'const_bracket', set_bracket_type_node],
+        ['T_LB', 'const', 'T_RB', set_bracket_base_type_node, 'const_bracket', set_bracket_type_node],
         ['epsilon', set_bracket_type_end_node],
     ],
     'Stmts': [
