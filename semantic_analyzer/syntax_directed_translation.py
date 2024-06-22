@@ -19,4 +19,4 @@ def check_code(syntax_tree: Node) -> None:
 
     for node in PostOrderIter(syntax_tree):
         if node.is_semantic:
-            node.run(node)
+            node()

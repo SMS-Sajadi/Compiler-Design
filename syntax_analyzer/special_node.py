@@ -24,3 +24,7 @@ class Node(NodeMixin):  # Add Node feature
 
     def __str__(self):
         return self.name
+
+    def __call__(self):
+        self.run(self)
+
