@@ -258,7 +258,7 @@ def is_decimal(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 if forward == len(string):
                     state = 2
             case 2:
-                return forward, Token("T_Decimal", f"{string[:forward]}")
+                return forward, Token("T_Decimal", f"{string[:forward]}", ctype="int")
 
     return 0, None
 
@@ -302,7 +302,7 @@ def is_hex(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     state = 4
 
             case 4:
-                return forward, Token("T_Hexadecimal", f"{string[:forward]}")
+                return forward, Token("T_Hexadecimal", f"{string[:forward]}", ctype="int")
 
     return 0, None
 
@@ -331,7 +331,7 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     forward += 1
                     state = 2
             case 2:
-                return forward, Token("T_String", fr"{string[:forward]}")
+                return forward, Token("T_String", fr"{string[:forward]}", ctype="char")
 
     return 0, None
 
@@ -379,7 +379,7 @@ def is_character(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                 state = 4
                 forward += 1
             case 4:
-                return forward, Token("T_Character", fr"{string[:forward]}")
+                return forward, Token("T_Character", fr"{string[:forward]}", ctype="char")
 
     return 0, None
 
