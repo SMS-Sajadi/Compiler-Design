@@ -12,6 +12,8 @@ from syntax_analyzer.parser import parse
 from syntax_analyzer.error_handlers import set_program
 from tree_printer import print_tree, write_tree_to_file
 from semantic_analyzer.syntax_directed_translation import check_code
+from semantic_analyzer.error_handlers import set_program_for_semantic_error
+
 
 def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_print=False):
     """
@@ -37,6 +39,7 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
         print_tree(syntax_tree, address=output, graphic_print=graphic_print)
     write_tree_to_file(syntax_tree, address=output)
 
+    set_program_for_semantic_error(program)
     check_code(syntax_tree)
 
 

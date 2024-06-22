@@ -17,6 +17,8 @@ class Node(NodeMixin):  # Add Node feature
         self.run = func
         self.ctype = None
         self.base_type = None
+        self.line = 0
+        self.inline_index = 0
         if children:  # set children only if given
             self.children = children
 

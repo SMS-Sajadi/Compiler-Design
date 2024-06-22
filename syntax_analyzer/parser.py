@@ -41,6 +41,8 @@ def parse(tokens: List[Token]) -> Node:
             if tokens[token_idx].type == top_of_stack:
                 top_of_tree.value = tokens[token_idx].attribute
                 top_of_tree.ctype = tokens[token_idx].ctype
+                top_of_tree.line = tokens[token_idx].line
+                top_of_tree.inline_index = tokens[token_idx].inline_index
                 token_idx += 1
             else:
                 is_error_seen = True

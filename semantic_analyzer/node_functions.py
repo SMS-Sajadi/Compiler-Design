@@ -7,6 +7,7 @@
 from typing import List
 from semantic_analyzer.basic_classes import Function, Variable
 from syntax_analyzer.special_node import Node
+from semantic_analyzer.error_handlers import raise_error
 
 FUNCTIONS: List[Function] = []
 VARIABLES: List[Variable] = []
@@ -15,19 +16,39 @@ VARIABLES: List[Variable] = []
 def add_function(self: Node):
     function_name = self.siblings[0].func_name
     function_return_type = self.siblings[0].ctype
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
 
     for func in FUNCTIONS:
         if func.name == function_name:
-            raise Exception("Function already exists")
+            raise_error("Function already exists", line, inline_index)
 
     new_function = Function(function_name)
     new_function.return_type = function_return_type
     FUNCTIONS.append(new_function)
 
 
+def add_variable(self: Node):
+    var_name = self.siblings[1].var_name
+    var_type = self.siblings[1].ctype
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
+
+    for var in VARIABLES:
+        if var.name == var_name:
+            raise_error("Variable already exists", line, inline_index)
+
+    new_var = Variable(var_name)
+    new_var.ctype = var_type
+    # TODO: Add type check
+    VARIABLES.append(new_var)
+
+
 def set_function_attributes(self: Node):
     self.parent.func_name = self.siblings[1].value
     self.parent.ctype = self.siblings[0].ctype
+    self.parent.line = self.siblings[1].line
+    self.parent.inline_index = self.siblings[1].inline_index
 
 
 def check_main(self: Node):
@@ -42,6 +63,8 @@ def check_main(self: Node):
 
 def set_type(self: Node):
     self.parent.ctype = self.siblings[0].value
+    self.parent.line = self.siblings[0].line
+    self.parent.inline_index = self.siblings[0].inline_index
 
 
 def set_declaration_expected_type(self: Node):
@@ -54,9 +77,15 @@ def set_var_declaration_expected_type(self: Node):
 
 
 def set_bracket_type(self: Node):
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
+
     if self.siblings[1].ctype != "int":
-        raise Exception("You Should use integer in the bracket")
+        raise_error("You Should use integer in the bracket", line, inline_index)
+
     self.parent.ctype = f"array({self.siblings[1].value}, {self.siblings[4].ctype})"
+    self.parent.line = self.siblings[4].line
+    self.parent.inline_index = self.siblings[4].inline_index
 
 
 def set_bracket_type_end(self: Node):
@@ -70,6 +99,8 @@ def set_bracket_base_type(self: Node):
 def set_declaration_var(self: Node):
     self.parent.var_name = self.siblings[0].value
     self.parent.ctype = self.siblings[-1].ctype
+    self.parent.line = self.siblings[0].line
+    self.parent.inline_index = self.siblings[0].inline_index
 
 
 def set_declaration_assign(self: Node):
@@ -79,21 +110,9 @@ def set_declaration_assign(self: Node):
         self.parent.ctype = "epsilon"
 
 
-def add_variable(self: Node):
-    var_name = self.siblings[1].var_name
-    var_type = self.siblings[1].ctype
-
-    for var in VARIABLES:
-        if var.name == var_name:
-            raise Exception("Variable already exists")
-
-    new_var = Variable(var_name)
-    new_var.ctype = var_type
-    # TODO: Add type check
-    VARIABLES.append(new_var)
-
-
 def set_const_value(self: Node):
     self.parent.value = self.siblings[0].value
     self.parent.ctype = self.siblings[0].ctype
+    self.parent.line = self.siblings[0].line
+    self.parent.inline_index = self.siblings[0].inline_index
 
