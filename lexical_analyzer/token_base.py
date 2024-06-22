@@ -16,7 +16,8 @@ class Token:
                  token_index: int = None,
                  token_inline_index: int = None,
                  *,
-                 is_identifier=False):
+                 is_identifier=False,
+                 ctype: str=None):
         """
         Token class constructor
         :param token_type: the type of the token
@@ -31,7 +32,9 @@ class Token:
         self.line = token_line
         self.index = token_index
         self.inline_index = token_inline_index
+        # TODO: Remove this property
         self.is_identifier = is_identifier
+        self.ctype = ctype
 
     def set_line(self, line_number: int):
         """
