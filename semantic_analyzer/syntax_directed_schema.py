@@ -23,6 +23,7 @@ set_declaration_assign_node = Node('set_declaration_assign', is_semantic=True, f
 add_variable_node = Node('add_variable', is_semantic=True, func=add_variable)
 set_var_declaration_expected_type_node = Node('set_var_declaration_expected_type', is_semantic=True,
                                               func=set_var_declaration_expected_type)
+set_const_value_node = Node('set_const_value', is_semantic=True, func=set_const_value)
 
 
 SDD: Final = {
@@ -199,12 +200,12 @@ SDD: Final = {
         ['T_LOp_NOT', 'rel_expr'],
     ],
     'const': [
-        ['T_Character'],
-        ['T_String'],
-        ['T_True'],
-        ['T_False'],
-        ['T_Decimal'],
-        ['T_Hexadecimal'],
+        ['T_Character', set_const_value_node],
+        ['T_String', set_const_value_node],
+        ['T_True', set_const_value_node],
+        ['T_False', set_const_value_node],
+        ['T_Decimal', set_const_value_node],
+        ['T_Hexadecimal', set_const_value_node],
     ],
     'for_statement': [
         ['T_For', 'T_LP', 'pre_loop', 'T_Semicolon', 'optional_expr', 'T_Semicolon', 'optional_assignment',

@@ -54,6 +54,8 @@ def set_var_declaration_expected_type(self: Node):
 
 
 def set_bracket_type(self: Node):
+    if self.siblings[1].ctype != "int":
+        raise Exception("You Should use integer in the bracket")
     self.parent.ctype = f"array({self.siblings[1].value}, {self.siblings[4].ctype})"
 
 
@@ -90,4 +92,8 @@ def add_variable(self: Node):
     # TODO: Add type check
     VARIABLES.append(new_var)
 
+
+def set_const_value(self: Node):
+    self.parent.value = self.siblings[0].value
+    self.parent.ctype = self.siblings[0].ctype
 
