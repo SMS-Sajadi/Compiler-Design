@@ -37,6 +37,10 @@ give_type_to_parent_relational_node = Node('give_type_to_parent_relational', is_
                                            func=give_type_to_parent_relational)
 give_type_to_next_logical_node = Node('give_type_to_next_logical_node', is_semantic=True,
                                       func=give_type_to_next_logical)
+give_func_return_type_to_Stmts_node = Node('give_func_return_type_to_Stmts', is_semantic=True,
+                                           func=give_func_return_type_to_stmts)
+give_func_return_type_node = Node('give_func_return_type', is_semantic=True, func=give_func_return_type)
+set_return_state_node = Node('set_return_state', is_semantic=True, func=set_return_state)
 
 
 SDD: Final = {
@@ -45,7 +49,8 @@ SDD: Final = {
         ['epsilon', check_main_node],
     ],
     'function': [
-        ['Type', 'T_Id', 'T_LP', 'function_params', 'T_RP', 'T_LC', 'Stmts', 'T_RC', set_function_node],
+        ['Type', 'T_Id', 'T_LP', 'function_params', 'T_RP', 'T_LC', give_func_return_type_to_Stmts_node,
+         'Stmts', 'T_RC', set_function_node],
     ],
     'Type': [
         ['T_Int', set_type_node],
@@ -68,12 +73,12 @@ SDD: Final = {
         ['epsilon', set_bracket_type_end_node],
     ],
     'Stmts': [
-        ['stmt', 'Stmts'],
+        [give_func_return_type_node, 'stmt', 'Stmts'],
         ['epsilon'],
     ],
     'stmt': [
         ['Declaration', 'T_Semicolon'],
-        ['other_stmt'],
+        [give_func_return_type_node, 'other_stmt'],
         ['Assignment', 'T_Semicolon'],
         ['for_statement'],
         ['if_statement'],
@@ -125,7 +130,7 @@ SDD: Final = {
     'other_stmt': [
         ['T_Break', 'T_Semicolon'],
         ['T_Continue', 'T_Semicolon'],
-        ['T_Return', 'Exp', 'T_Semicolon'],
+        ['T_Return', 'Exp', 'T_Semicolon', set_return_state_node],
     ],
     'Args': [
         ['Exp', 'Args_list'],
@@ -195,6 +200,7 @@ SDD: Final = {
     ],
     'factor': [
         ['immutable', set_const_value_node],
+        # TODO: complete
         ['T_Id', 'mutable_or_function_call'],
     ],
     'mutable_or_function_call': [

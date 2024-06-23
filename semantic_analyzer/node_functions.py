@@ -207,3 +207,23 @@ def give_type_to_parent_relational(self: Node):
     self.parent.ctype = "bool"
     self.parent.line = self.siblings[-1].line
     self.parent.inline_index = self.siblings[-1].inline_index
+
+
+def give_func_return_type_to_stmts(self: Node):
+    self.siblings[6].func_return_type = self.siblings[0].ctype
+
+
+def give_func_return_type(self: Node):
+    for node in self.siblings:
+        node.func_return_type = self.parent.func_return_type
+
+
+def set_return_state(self: Node):
+    func_return_type = self.parent.func_return_type
+    return_expr_type = self.siblings[1].ctype
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
+
+    if func_return_type != return_expr_type:
+        raise_error(f"Function Return Type is {func_return_type}, but you have returned {return_expr_type}!",
+                    line, inline_index)
