@@ -50,6 +50,10 @@ set_bracket_type_inuse_node = Node('set_bracket_type_inuse', is_semantic=True, f
 set_bracket_type_inuse_end_node = Node('set_bracket_type_inuse_end', is_semantic=True,
                                        func=set_bracket_type_inuse_end)
 check_mutable_type_node = Node('check_mutable_type', is_semantic=True, func=check_mutable_type)
+set_bracket_type_in_exp_node = Node('set_bracket_type_in_exp', is_semantic=True,
+                                    func=set_bracket_type_in_exp)
+give_type_to_parent_mutable_or_function_node = Node('give_type_to_parent_mutable_or_function', is_semantic=True,
+                                                    func=give_type_to_parent_mutable_or_function)
 
 
 SDD: Final = {
@@ -210,12 +214,12 @@ SDD: Final = {
     'factor': [
         ['immutable', set_const_value_node],
         # TODO: complete
-        ['T_Id', 'mutable_or_function_call'],
+        ['T_Id', set_bracket_type_in_exp_node, 'mutable_or_function_call', give_type_to_parent_mutable_or_function_node],
     ],
     'mutable_or_function_call': [
-        ['bracket'],
+        [set_var_declaration_expected_type_node, 'bracket', set_bracket_type_inuse_end_node],
         ['call'],
-        ['epsilon'],
+        ['epsilon', set_bracket_type_inuse_end_node],
     ],
     'call': [
         ['T_LP', 'Args', 'T_RP'],

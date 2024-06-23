@@ -267,9 +267,12 @@ def set_bracket_type_inuse(self: Node):
         raise_error("You must use an int expression as the bracket index!", line, inline_index)
 
     base_type: str = self.parent.base_type
-    idx = base_type.index(',')
-    new_base_type = base_type[idx + 2:-1]
-    self.siblings[3].base_type = new_base_type
+    try:
+        idx = base_type.index(',')
+        new_base_type = base_type[idx + 2:-1]
+        self.siblings[3].base_type = new_base_type
+    except ValueError:
+        raise_error(f"The type is {base_type} and you can't add any more brackets", line, inline_index)
 
 
 def check_mutable_type(self: Node):
@@ -286,6 +289,39 @@ def set_bracket_type_inuse_end(self: Node):
         self.parent.ctype = self.parent.base_type
     else:
         self.parent.ctype = self.siblings[-1].ctype
+
+
+def set_bracket_type_in_exp(self: Node):
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
+
+    self.siblings[1].line = line
+    self.siblings[1].inline_index = inline_index
+
+    has_declared = False
+
+    for var in VARIABLES:
+        if var.name == self.siblings[0].value:
+            self.siblings[1].base_type = var.ctype
+            has_declared = True
+            break
+
+    for func in FUNCTIONS:
+        if func.name == self.siblings[0].value:
+            self.siblings[1].base_type = func.return_type
+            has_declared = True
+            break
+
+    if not has_declared:
+        raise_error("You must declare the variable first!", line, inline_index)
+
+
+def give_type_to_parent_mutable_or_function(self: Node):
+    self.parent.value = self.siblings[2].value
+    self.parent.ctype = self.siblings[2].ctype
+    self.parent.line = self.siblings[2].line
+    self.parent.inline_index = self.siblings[2].inline_index
+
 
 
 def get_id_type(self: Node):
