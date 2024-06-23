@@ -140,9 +140,9 @@ SDD: Final = {
         ['epsilon', check_assignment_state_node],
     ],
     'check_call': [
-        ['call'],
+        ['call'],  # TODO: Complete
         [set_bracket_base_type_in_check_call_node, 'bracket', set_assignment_expected_type_for_bracket_node,
-         'Assign'],  # TODO: Complete
+         'Assign'],
         [set_assignment_expected_type_node, 'Assign'],
     ],
     'other_stmt': [

@@ -331,7 +331,8 @@ def is_string(string: str) -> Tuple[int, Token] | Tuple[int, None]:
                     forward += 1
                     state = 2
             case 2:
-                return forward, Token("T_String", fr"{string[:forward]}", ctype="char")
+                return forward, Token("T_String", fr"{string[:forward]}",
+                                      ctype=f"array({forward - 2}, char)")
 
     return 0, None
 
