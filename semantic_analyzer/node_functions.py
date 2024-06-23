@@ -246,6 +246,48 @@ def set_assignment_expected_type(self: Node):
     self.siblings[0].expected_type = self.parent.expected_type
 
 
+def give_base_type_to_bracket(self: Node):
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
+
+    for var in VARIABLES:
+        if var.name == self.siblings[0].value:
+            self.siblings[1].base_type = var.ctype
+            break
+    else:
+        raise_error("You must declare the variable first!", line, inline_index)
+
+
+def set_bracket_type_inuse(self: Node):
+    bracket_index_type = self.siblings[1].ctype
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
+
+    if bracket_index_type != "int":
+        raise_error("You must use an int expression as the bracket index!", line, inline_index)
+
+    base_type: str = self.parent.base_type
+    idx = base_type.index(',')
+    new_base_type = base_type[idx + 2:-1]
+    self.siblings[3].base_type = new_base_type
+
+
+def check_mutable_type(self: Node):
+    ctype = self.siblings[-1].ctype
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
+
+    if ctype != "int":
+        raise_error(f"Type is {ctype} and arithmatic operations can't be done on it!", line, inline_index)
+
+
+def set_bracket_type_inuse_end(self: Node):
+    if len(self.siblings) == 1:
+        self.parent.ctype = self.parent.base_type
+    else:
+        self.parent.ctype = self.siblings[-1].ctype
+
+
 def get_id_type(self: Node):
     id_name = self.siblings[0].value
 

@@ -45,6 +45,11 @@ check_assignment_state_node = Node('check_assignment_state', is_semantic=True, f
 set_assignment_expected_type_node = Node('set_assignment_expected_type', is_semantic=True,
                                          func=set_assignment_expected_type)
 get_id_type_node = Node('get_id_type', is_semantic=True, func=get_id_type)
+give_base_type_to_bracket_node = Node('give_base_type_to_bracket', is_semantic=True, func=give_base_type_to_bracket)
+set_bracket_type_inuse_node = Node('set_bracket_type_inuse', is_semantic=True, func=set_bracket_type_inuse)
+set_bracket_type_inuse_end_node = Node('set_bracket_type_inuse_end', is_semantic=True,
+                                       func=set_bracket_type_inuse_end)
+check_mutable_type_node = Node('check_mutable_type', is_semantic=True, func=check_mutable_type)
 
 
 SDD: Final = {
@@ -111,11 +116,11 @@ SDD: Final = {
         ['T_Id', set_bracket_base_type_node, 'const_bracket', set_declaration_var_node],
     ],
     'mutable': [
-        ['T_Id', 'bracket'],
+        ['T_Id', give_base_type_to_bracket_node, 'bracket', check_mutable_type_node],
     ],
     'bracket': [
-        ['T_LB', 'Exp', 'T_RB', 'bracket'],
-        ['epsilon'],
+        ['T_LB', 'Exp', 'T_RB', set_bracket_type_inuse_node, 'bracket', set_bracket_type_inuse_end_node],
+        ['epsilon', set_bracket_type_inuse_end_node],
     ],
     'Assign': [
         ['T_Assign', 'Exp', check_assignment_state_node],
