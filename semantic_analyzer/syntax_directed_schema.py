@@ -54,6 +54,10 @@ set_bracket_type_in_exp_node = Node('set_bracket_type_in_exp', is_semantic=True,
                                     func=set_bracket_type_in_exp)
 give_type_to_parent_mutable_or_function_node = Node('give_type_to_parent_mutable_or_function', is_semantic=True,
                                                     func=give_type_to_parent_mutable_or_function)
+set_bracket_base_type_in_check_call_node = Node('set_bracket_base_type_in_check_call', is_semantic=True,
+                                                func=set_bracket_base_type_in_check_call)
+set_assignment_expected_type_for_bracket_node = Node('set_assignment_expected_type_for_bracket', is_semantic=True,
+                                                     func=set_assignment_expected_type_for_bracket)
 
 
 SDD: Final = {
@@ -137,7 +141,8 @@ SDD: Final = {
     ],
     'check_call': [
         ['call'],
-        ['bracket', 'Assign'],  # TODO: Complete
+        [set_bracket_base_type_in_check_call_node, 'bracket', set_assignment_expected_type_for_bracket_node,
+         'Assign'],  # TODO: Complete
         [set_assignment_expected_type_node, 'Assign'],
     ],
     'other_stmt': [
@@ -213,11 +218,11 @@ SDD: Final = {
     ],
     'factor': [
         ['immutable', set_const_value_node],
-        # TODO: complete
         ['T_Id', set_bracket_type_in_exp_node, 'mutable_or_function_call', give_type_to_parent_mutable_or_function_node],
     ],
     'mutable_or_function_call': [
         [set_var_declaration_expected_type_node, 'bracket', set_bracket_type_inuse_end_node],
+        # TODO: complete the call support
         ['call'],
         ['epsilon', set_bracket_type_inuse_end_node],
     ],

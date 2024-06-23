@@ -323,6 +323,13 @@ def give_type_to_parent_mutable_or_function(self: Node):
     self.parent.inline_index = self.siblings[2].inline_index
 
 
+def set_bracket_base_type_in_check_call(self: Node):
+    self.siblings[0].base_type = self.parent.expected_type
+
+
+def set_assignment_expected_type_for_bracket(self: Node):
+    self.siblings[2].expected_type = self.siblings[1].ctype
+
 
 def get_id_type(self: Node):
     id_name = self.siblings[0].value
