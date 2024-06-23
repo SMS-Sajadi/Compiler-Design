@@ -42,7 +42,8 @@ def add_variable(self: Node):
     inline_index += len(var_name) + 2
 
     if assignment_type != var_type and assignment_type != "epsilon":
-        raise_error(f"Variable type mismatch, you should assign {var_type} expression!", line, inline_index)
+        raise_error(f"Variable type mismatch, you should assign {var_type} "
+                    f"expression but assigned {assignment_type}!", line, inline_index)
 
     new_var = Variable(var_name)
     new_var.ctype = var_type
