@@ -116,3 +116,87 @@ def set_const_value(self: Node):
     self.parent.line = self.siblings[0].line
     self.parent.inline_index = self.siblings[0].inline_index
 
+
+def set_immutable_type_numeric(self: Node):
+    self.parent.ctype = self.siblings[1].ctype
+    self.parent.line = self.siblings[1].line
+    self.parent.inline_index = self.siblings[1].inline_index
+
+
+def set_immutable_type_relational(self: Node):
+    self.parent.ctype = self.siblings[1].ctype
+    self.parent.line = self.siblings[1].line
+    self.parent.inline_index = self.siblings[1].inline_index
+
+
+def give_type_to_next_numeric(self: Node):
+    if len(self.siblings) == 3:
+        self.siblings[1].base_type = self.siblings[0].ctype
+        self.siblings[1].line = self.siblings[0].line
+        self.siblings[1].inline_index = self.siblings[0].inline_index
+    else:
+        line = self.siblings[1].line
+        inline_index = self.siblings[1].inline_index
+
+        if self.siblings[1].ctype != "int":
+            raise_error("You can't Use non numeric values!", line, inline_index)
+
+        self.siblings[2].base_type = self.siblings[1].ctype
+        self.siblings[2].line = self.siblings[1].line
+        self.siblings[2].inline_index = self.siblings[1].inline_index
+
+
+def give_type_to_next_relational(self: Node):
+    if len(self.siblings) == 3:
+        self.siblings[1].base_type = self.siblings[0].ctype
+        self.siblings[1].line = self.siblings[0].line
+        self.siblings[1].inline_index = self.siblings[0].inline_index
+    else:
+        line = self.siblings[1].line
+        inline_index = self.siblings[1].inline_index
+
+        if self.siblings[1].ctype != self.parent.base_type:
+            raise_error("When You are Comparing, both sides should have the same type!", line, inline_index)
+
+        self.siblings[2].base_type = self.siblings[1].ctype
+        self.siblings[2].line = self.siblings[1].line
+        self.siblings[2].inline_index = self.siblings[1].inline_index
+
+
+def give_type_to_next_logical(self: Node):
+    if len(self.siblings) == 3:
+        self.siblings[1].base_type = self.siblings[0].ctype
+        self.siblings[1].line = self.siblings[0].line
+        self.siblings[1].inline_index = self.siblings[0].inline_index
+    else:
+        line = self.parent.line
+        inline_index = self.parent.inline_index
+
+        if self.parent.base_type != "bool":
+            raise_error("You must use a logical expression!", line, inline_index)
+
+        line = self.siblings[1].line
+        inline_index = self.siblings[1].inline_index
+
+        if self.siblings[1].ctype != "bool":
+            raise_error("You must use a logical expression!", line, inline_index)
+
+        self.siblings[2].base_type = self.siblings[1].ctype
+        self.siblings[2].line = self.siblings[1].line
+        self.siblings[2].inline_index = self.siblings[1].inline_index
+
+
+def give_type_to_parent_end(self: Node):
+    self.parent.ctype = self.parent.base_type
+
+
+def give_type_to_parent(self: Node):
+    self.parent.ctype = self.siblings[-1].ctype
+    self.parent.line = self.siblings[-1].line
+    self.parent.inline_index = self.siblings[-1].inline_index
+
+
+def give_type_to_parent_relational(self: Node):
+    self.parent.ctype = "bool"
+    self.parent.line = self.siblings[-1].line
+    self.parent.inline_index = self.siblings[-1].inline_index

@@ -24,6 +24,19 @@ add_variable_node = Node('add_variable', is_semantic=True, func=add_variable)
 set_var_declaration_expected_type_node = Node('set_var_declaration_expected_type', is_semantic=True,
                                               func=set_var_declaration_expected_type)
 set_const_value_node = Node('set_const_value', is_semantic=True, func=set_const_value)
+set_immutable_type_numeric_node = Node('set_immutable_type_numeric_node', is_semantic=True,
+                                       func=set_immutable_type_numeric)
+set_immutable_type_relational_node = Node('set_immutable_type_relational', is_semantic=True,
+                                          func=set_immutable_type_relational)
+give_type_to_next_numeric_node = Node('give_type_to_next', is_semantic=True, func=give_type_to_next_numeric)
+give_type_to_parent_end_node = Node('give_type_to_parent_end', is_semantic=True, func=give_type_to_parent_end)
+give_type_to_parent_node = Node('give_type_to_parent', is_semantic=True, func=give_type_to_parent)
+give_type_to_next_relational_node = Node('give_type_to_next_relational', is_semantic=True,
+                                         func=give_type_to_next_relational)
+give_type_to_parent_relational_node = Node('give_type_to_parent_relational', is_semantic=True,
+                                           func=give_type_to_parent_relational)
+give_type_to_next_logical_node = Node('give_type_to_next_logical_node', is_semantic=True,
+                                      func=give_type_to_next_logical)
 
 
 SDD: Final = {
@@ -126,28 +139,28 @@ SDD: Final = {
         ['T_Id', 'check_call'],
     ],
     'Exp': [
-        ['and_expr', 'A'],
+        ['and_expr', give_type_to_next_logical_node, 'A', give_type_to_parent_node],
     ],
     'A': [
-        ['T_LOp_OR', 'and_expr', 'A'],
-        ['epsilon'],
+        ['T_LOp_OR', 'and_expr', give_type_to_next_logical_node, 'A', give_type_to_parent_relational_node],
+        ['epsilon', give_type_to_parent_end_node],
     ],
     'and_expr': [
-        ['unary_expr', 'B'],
+        ['unary_expr', give_type_to_next_logical_node, 'B', give_type_to_parent_node],
     ],
     'B': [
-        ['T_LOp_AND', 'unary_expr', 'B'],
-        ['epsilon'],
+        ['T_LOp_AND', 'unary_expr', give_type_to_next_logical_node, 'B', give_type_to_parent_relational_node],
+        ['epsilon', give_type_to_parent_end_node],
     ],
     'unary_expr': [
-        ['rel_expr'],
+        ['rel_expr', set_const_value_node],
     ],
     'rel_expr': [
-        ['sum_expr', 'C'],
+        ['sum_expr', give_type_to_next_relational_node, 'C', give_type_to_parent_node],
     ],
     'C': [
-        ['rel_op', 'sum_expr', 'C'],
-        ['epsilon'],
+        ['rel_op', 'sum_expr', give_type_to_next_relational_node, 'C', give_type_to_parent_relational_node],
+        ['epsilon', give_type_to_parent_end_node],
     ],
     'rel_op': [
         ['T_ROp_L'],
@@ -158,22 +171,22 @@ SDD: Final = {
         ['T_ROp_E'],
     ],
     'sum_expr': [
-        ['mul_expr', 'D'],
+        ['mul_expr', give_type_to_next_numeric_node, 'D', give_type_to_parent_node],
     ],
     'D': [
-        ['sum_op', 'mul_expr', 'D'],
-        ['epsilon'],
+        ['sum_op', 'mul_expr', give_type_to_next_numeric_node, 'D', give_type_to_parent_node],
+        ['epsilon', give_type_to_parent_end_node],
     ],
     'sum_op': [
         ['T_AOp_PL'],
         ['T_AOp_MN'],
     ],
     'mul_expr': [
-        ['factor', 'E'],
+        ['factor', give_type_to_next_numeric_node, 'E', give_type_to_parent_node],
     ],
     'E': [
-        ['mul_op', 'factor', 'E'],
-        ['epsilon'],
+        ['mul_op', 'factor', give_type_to_next_numeric_node, 'E', give_type_to_parent_node],
+        ['epsilon', give_type_to_parent_end_node],
     ],
     'mul_op': [
         ['T_AOp_ML'],
@@ -181,7 +194,7 @@ SDD: Final = {
         ['T_AOp_RM'],
     ],
     'factor': [
-        ['immutable'],
+        ['immutable', set_const_value_node],
         ['T_Id', 'mutable_or_function_call'],
     ],
     'mutable_or_function_call': [
@@ -193,11 +206,11 @@ SDD: Final = {
         ['T_LP', 'Args', 'T_RP'],
     ],
     'immutable': [
-        ['T_LP', 'Exp', 'T_RP'],
-        ['const'],
-        ['T_AOp_PL', 'factor'],
-        ['T_AOp_MN', 'factor'],
-        ['T_LOp_NOT', 'rel_expr'],
+        ['T_LP', 'Exp', 'T_RP', set_immutable_type_numeric],
+        ['const', set_const_value_node],
+        ['T_AOp_PL', 'factor', set_immutable_type_numeric_node],
+        ['T_AOp_MN', 'factor', set_immutable_type_numeric_node],
+        ['T_LOp_NOT', 'rel_expr', set_immutable_type_relational_node],
     ],
     'const': [
         ['T_Character', set_const_value_node],
