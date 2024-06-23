@@ -227,3 +227,31 @@ def set_return_state(self: Node):
     if func_return_type != return_expr_type:
         raise_error(f"Function Return Type is {func_return_type}, but you have returned {return_expr_type}!",
                     line, inline_index)
+
+
+def check_assignment_state(self: Node):
+    expected_type = self.parent.expected_type
+    expression_type = self.siblings[-1].ctype if len(self.siblings) > 1 else "epsilon"
+    line = self.siblings[-1].line
+    inline_index = self.siblings[-1].inline_index
+
+    if len(self.siblings) == 3 and expected_type != "int":
+        raise_error("You can't use arithmatic assignment for non numeric values!", line, 0)
+
+    if expected_type != expression_type and expected_type != "epsilon":
+        raise_error(f"Expected type {expected_type}, but you have assigned {expression_type}!", line, inline_index)
+
+
+def set_assignment_expected_type(self: Node):
+    self.siblings[0].expected_type = self.parent.expected_type
+
+
+def get_id_type(self: Node):
+    id_name = self.siblings[0].value
+
+    for variable in VARIABLES:
+        if variable.name == id_name:
+            self.siblings[1].expected_type = variable.ctype
+
+    # TODO: Check if it is needed to be continued for Functions
+    # TODO: Prevent from creating a var with the name of a function

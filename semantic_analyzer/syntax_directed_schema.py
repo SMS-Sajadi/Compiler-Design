@@ -41,6 +41,10 @@ give_func_return_type_to_Stmts_node = Node('give_func_return_type_to_Stmts', is_
                                            func=give_func_return_type_to_stmts)
 give_func_return_type_node = Node('give_func_return_type', is_semantic=True, func=give_func_return_type)
 set_return_state_node = Node('set_return_state', is_semantic=True, func=set_return_state)
+check_assignment_state_node = Node('check_assignment_state', is_semantic=True, func=check_assignment_state)
+set_assignment_expected_type_node = Node('set_assignment_expected_type', is_semantic=True,
+                                         func=set_assignment_expected_type)
+get_id_type_node = Node('get_id_type', is_semantic=True, func=get_id_type)
 
 
 SDD: Final = {
@@ -114,18 +118,18 @@ SDD: Final = {
         ['epsilon'],
     ],
     'Assign': [
-        ['T_Assign', 'Exp'],
-        ['T_AOp_PL', 'T_Assign', 'Exp'],
-        ['T_AOp_MN', 'T_Assign', 'Exp'],
-        ['T_AOp_ML', 'T_Assign', 'Exp'],
-        ['T_AOp_DV', 'T_Assign', 'Exp'],
-        ['T_AOp_RM', 'T_Assign', 'Exp'],
-        ['epsilon'],
+        ['T_Assign', 'Exp', check_assignment_state_node],
+        ['T_AOp_PL', 'T_Assign', 'Exp', check_assignment_state_node],
+        ['T_AOp_MN', 'T_Assign', 'Exp', check_assignment_state_node],
+        ['T_AOp_ML', 'T_Assign', 'Exp', check_assignment_state_node],
+        ['T_AOp_DV', 'T_Assign', 'Exp', check_assignment_state_node],
+        ['T_AOp_RM', 'T_Assign', 'Exp', check_assignment_state_node],
+        ['epsilon', check_assignment_state_node],
     ],
     'check_call': [
         ['call'],
-        ['bracket', 'Assign'],
-        ['Assign'],
+        ['bracket', 'Assign'],  # TODO: Complete
+        [set_assignment_expected_type_node, 'Assign'],
     ],
     'other_stmt': [
         ['T_Break', 'T_Semicolon'],
@@ -141,7 +145,7 @@ SDD: Final = {
         ['epsilon'],
     ],
     'Assignment': [
-        ['T_Id', 'check_call'],
+        ['T_Id', get_id_type_node, 'check_call'],
     ],
     'Exp': [
         ['and_expr', give_type_to_next_logical_node, 'A', give_type_to_parent_node],
