@@ -36,8 +36,8 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
     syntax_tree = parse(tokens)
 
     if tree_print:
-        print_tree(syntax_tree, address=output, graphic_print=graphic_print)
-    write_tree_to_file(syntax_tree, address=output)
+        print_tree(syntax_tree, address=output)
+    write_tree_to_file(syntax_tree, address=output, graphic_print=graphic_print)
 
     set_program_for_semantic_error(program)
     check_code(syntax_tree)
