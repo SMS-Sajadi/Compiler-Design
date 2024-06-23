@@ -74,7 +74,7 @@ def is_false(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     :return:
     """
     if string[:5] == "false":
-        return 5, Token("T_False", "false")
+        return 5, Token("T_False", "false", ctype="bool")
     return 0, None
 
 
@@ -140,7 +140,7 @@ def is_true(string: str) -> Tuple[int, Token] | Tuple[int, None]:
     :return:
     """
     if string[:4] == "true":
-        return 4, Token("T_True", "true")
+        return 4, Token("T_True", "true", ctype="bool")
     return 0, None
 
 
