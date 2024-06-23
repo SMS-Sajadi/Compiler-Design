@@ -38,9 +38,14 @@ def add_variable(self: Node):
         if var.name == var_name:
             raise_error("Variable already exists", line, inline_index)
 
+    assignment_type = self.siblings[2].ctype
+    inline_index += len(var_name) + 2
+
+    if assignment_type != var_type and assignment_type != "epsilon":
+        raise_error(f"Variable type mismatch, you should assign {var_type} expression!", line, inline_index)
+
     new_var = Variable(var_name)
     new_var.ctype = var_type
-    # TODO: Add type check
     VARIABLES.append(new_var)
 
 
@@ -106,6 +111,8 @@ def set_declaration_var(self: Node):
 def set_declaration_assign(self: Node):
     if len(self.siblings) != 1:
         self.parent.ctype = self.siblings[-1].ctype
+        self.parent.line = self.siblings[-1].line
+        self.parent.inline_index = self.siblings[-1].inline_index
     else:
         self.parent.ctype = "epsilon"
 
