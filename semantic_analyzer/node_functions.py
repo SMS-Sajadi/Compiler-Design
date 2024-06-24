@@ -314,7 +314,7 @@ def set_bracket_type_in_exp(self: Node):
     has_declared = False
 
     for var in VARIABLES:
-        if var.name == self.siblings[0].value:
+        if var.name == self.siblings[0].value and var.scope_end >= line >= var.scope_start:
             self.siblings[1].base_type = var.ctype
             has_declared = True
             break
