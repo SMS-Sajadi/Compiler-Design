@@ -77,6 +77,7 @@ M = {
         'T_Print': ['stmt', 'Stmts'],
         'T_AOp_PL': ['stmt', 'Stmts'],
         'T_AOp_MN': ['stmt', 'Stmts'],
+        'T_LC': ['stmt', 'Stmts'],
         # Follow
         'T_RC': ['epsilon'],
     },
@@ -94,6 +95,7 @@ M = {
         'T_Print': ['print_statement', 'T_Semicolon'],
         'T_AOp_PL': ['unary_assignment', 'T_Semicolon'],
         'T_AOp_MN': ['unary_assignment', 'T_Semicolon'],
+        'T_LC': ['T_LC', 'Stmts', 'T_RC'],
         # Error Handling
         'T_RC': ['synch'],
     },
@@ -211,6 +213,7 @@ M = {
         'T_AOp_PL': ['synch'],
         'T_AOp_MN': ['synch'],
         'T_RC': ['synch'],
+        'T_LC': ['synch'],
     },
     'Args': {
         # First
@@ -686,6 +689,7 @@ M = {
         'T_AOp_PL': ['synch'],
         'T_AOp_MN': ['synch'],
         'T_RC': ['synch'],
+        'T_LC': ['synch'],
     },
     'pre_loop': {
         # First
@@ -736,6 +740,7 @@ M = {
         'T_AOp_PL': ['synch'],
         'T_AOp_MN': ['synch'],
         'T_RC': ['synch'],
+        'T_LC': ['synch'],
     },
     'else_if': {
         # First
@@ -754,6 +759,7 @@ M = {
         'T_AOp_PL': ['epsilon'],
         'T_AOp_MN': ['epsilon'],
         'T_RC': ['epsilon'],
+        'T_LC': ['epsilon'],
     },
     'check_if': {
         # First

@@ -54,6 +54,7 @@ RAW_GRAMMAR: Final = {
         ['if_statement'],
         ['print_statement', 'T_Semicolon'],
         ['unary_assignment', 'T_Semicolon'],
+        ['T_LC', 'Stmts', 'T_RC'],
     ],
     'Declaration': [
         ['Type', 'Declarations'],
