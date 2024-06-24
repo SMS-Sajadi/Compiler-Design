@@ -73,6 +73,9 @@ give_type_to_parent_in_call_node = Node('give_type_to_parent_in_call', is_semant
                                         func=give_type_to_parent_in_call)
 set_stmts_scope_in_if_node = Node('set_stmts_scope_in_if', is_semantic=True, func=set_stmts_scope_in_if)
 set_stmts_scope_in_else_node = Node('set_stmts_scope_in_else', is_semantic=True, func=set_stmts_scope_in_else)
+set_pre_loop_scope_node = Node('set_pre_loop_scope', is_semantic=True, func=set_pre_loop_scope)
+check_optional_expr_for_node = Node('check_optional_expr_for', is_semantic=True, func=check_optional_expr_for)
+set_stmts_scope_in_for_node = Node('set_stmts_scope_in_for', is_semantic=True, func=set_stmts_scope_in_for)
 
 
 SDD: Final = {
@@ -112,7 +115,7 @@ SDD: Final = {
         [give_scope_to_others_node, 'Declaration', 'T_Semicolon'],
         [give_func_return_type_node, 'other_stmt'],
         ['Assignment', 'T_Semicolon'],
-        ['for_statement'],
+        [give_func_return_type_node, 'for_statement'],
         [give_func_return_type_node, 'if_statement'],
         ['print_statement', 'T_Semicolon'],
         ['unary_assignment', 'T_Semicolon'],
@@ -259,16 +262,16 @@ SDD: Final = {
         ['T_Hexadecimal', set_const_value_node],
     ],
     'for_statement': [
-        ['T_For', 'T_LP', 'pre_loop', 'T_Semicolon', 'optional_expr', 'T_Semicolon', 'optional_assignment',
-                  'T_RP', 'T_LC', 'Stmts', 'T_RC'],
+        ['T_For', 'T_LP', set_pre_loop_scope_node, 'pre_loop', 'T_Semicolon', 'optional_expr', 'T_Semicolon',
+         'optional_assignment', 'T_RP', 'T_LC', set_stmts_scope_in_for_node, 'Stmts', 'T_RC'],
     ],
     'pre_loop': [
-        ['Declaration'],
+        [give_scope_to_others_node, 'Declaration'],
         ['Assignment'],
         ['epsilon'],
     ],
     'optional_expr': [
-        ['Exp'],
+        ['Exp', check_optional_expr_for_node],
         ['epsilon'],
     ],
     'optional_assignment': [

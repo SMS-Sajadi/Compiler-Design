@@ -22,3 +22,4 @@ class Variable:
         self.ctype = None
         self.scope_start = -1
         self.scope_end = -1
+        self.scope = -1

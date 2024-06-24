@@ -7,10 +7,13 @@
 from typing import List
 from semantic_analyzer.basic_classes import Function, Variable
 from syntax_analyzer.special_node import Node
+from semantic_analyzer.scope_nodes import Scope
 from semantic_analyzer.error_handlers import raise_error, raise_no_main_error
+from uuid import uuid4
 
 FUNCTIONS: List[Function] = []
 VARIABLES: List[Variable] = []
+SCOPES: List[Scope] = []
 
 
 def add_function(self: Node):
@@ -34,11 +37,12 @@ def add_function(self: Node):
 def add_variable(self: Node):
     var_name = self.siblings[1].var_name
     var_type = self.siblings[1].ctype
+    scope = self.parent.scope
     line = self.siblings[1].line
     inline_index = self.siblings[1].inline_index
 
     for var in VARIABLES:
-        if var.name == var_name and var.scope_end >= line >= var.scope_start:
+        if var.name == var_name and var.scope_end >= line >= var.scope_start and var.scope == scope:
             raise_error(f"You have declared the variable in line {var.scope_start}", line, inline_index)
 
     assignment_type = self.siblings[2].ctype
@@ -52,6 +56,7 @@ def add_variable(self: Node):
     new_var.ctype = var_type
     new_var.scope_start = self.siblings[1].line
     new_var.scope_end = self.parent.end_scope
+    new_var.scope = scope
     VARIABLES.append(new_var)
 
 
@@ -89,6 +94,7 @@ def set_declaration_expected_type(self: Node):
     self.siblings[1].base_type = self.siblings[0].ctype
     self.siblings[1].start_scope = self.parent.start_scope
     self.siblings[1].end_scope = self.parent.end_scope
+    self.siblings[1].scope = self.parent.scope
 
 
 def set_var_declaration_expected_type(self: Node):
@@ -96,6 +102,7 @@ def set_var_declaration_expected_type(self: Node):
         node.base_type = self.parent.base_type
         node.start_scope = self.parent.start_scope
         node.end_scope = self.parent.end_scope
+        node.scope = self.parent.scope
 
 
 def set_bracket_type(self: Node):
@@ -230,6 +237,7 @@ def give_func_return_type_to_stmts(self: Node):
     self.siblings[7].func_return_type = self.siblings[0].ctype
     self.siblings[7].start_scope = self.siblings[6].line
     self.siblings[7].end_scope = self.siblings[8].line
+    self.siblings[7].scope = self.siblings[4].scope
 
 
 def give_func_return_type(self: Node):
@@ -237,6 +245,7 @@ def give_func_return_type(self: Node):
         node.func_return_type = self.parent.func_return_type
         node.start_scope = self.parent.start_scope
         node.end_scope = self.parent.end_scope
+        node.scope = self.parent.scope
 
 
 def set_return_state(self: Node):
@@ -360,12 +369,15 @@ def set_scope_for_function_params(self: Node):
     self.siblings[3].start_scope = self.siblings[5].line
     self.siblings[3].end_scope = self.siblings[8].line
     self.siblings[3].parameters = []
+    self.siblings[3].scope = Scope(str(uuid4()))
+    # TODO: DO we Need a List of Scopes?
 
 
 def give_scope_to_others(self: Node):
     for node in self.siblings:
         node.start_scope = self.parent.start_scope
         node.end_scope = self.parent.end_scope
+        node.scope = self.parent.scope
 
         if self.parent.name in ["function_params", "params_list"]:
             node.parameters = self.parent.parameters
@@ -382,6 +394,7 @@ def add_parameter(self: Node):
     inline_index = self.siblings[0].inline_index
     scope_start = self.parent.start_scope
     scope_end = self.parent.end_scope
+    scope = self.parent.scope
 
     for var in VARIABLES:
         if var.name == var_name and var.scope_end >= line >= var.scope_start:
@@ -391,6 +404,7 @@ def add_parameter(self: Node):
     new_var.ctype = var_type
     new_var.scope_start = scope_start
     new_var.scope_end = scope_end
+    new_var.scope = scope
     VARIABLES.append(new_var)
     self.parent.parameters.append(new_var)
 
@@ -473,8 +487,10 @@ def set_stmts_scope_in_if(self: Node):
     self.siblings[7].func_return_type = self.parent.func_return_type
     self.siblings[7].start_scope = self.parent.start_scope
     self.siblings[7].end_scope = self.parent.end_scope
+    self.siblings[7].scope = self.parent.scope
     self.siblings[5].start_scope = self.siblings[4].line
     self.siblings[5].end_scope = self.siblings[6].line
+    self.siblings[5].scope = Scope(str(uuid4()), parent=self.parent.scope)
 
     expression_type = self.siblings[2].ctype
     line = self.siblings[2].line
@@ -489,3 +505,26 @@ def set_stmts_scope_in_else(self: Node):
     self.siblings[1].func_return_type = self.parent.func_return_type
     self.siblings[1].start_scope = self.siblings[0].line
     self.siblings[1].end_scope = self.siblings[2].line
+    self.siblings[1].scope = Scope(str(uuid4()), parent=self.parent.scope)
+
+
+def set_pre_loop_scope(self: Node):
+    self.siblings[2].start_scope = self.siblings[0].line
+    self.siblings[2].end_scope = self.siblings[11].line
+    self.siblings[2].scope = Scope(str(uuid4()), parent=self.parent.scope)
+
+
+def check_optional_expr_for(self: Node):
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
+
+    if self.siblings[0].ctype != "bool":
+        raise_error(f"You have used a {self.siblings[0].ctype} expression, but it must be a bool expression!",
+                    line, inline_index)
+
+
+def set_stmts_scope_in_for(self: Node):
+    self.siblings[10].func_return_type = self.parent.func_return_type
+    self.siblings[10].start_scope = self.siblings[9].line
+    self.siblings[10].end_scope = self.siblings[11].line
+    self.siblings[10].scope = self.siblings[3].scope
