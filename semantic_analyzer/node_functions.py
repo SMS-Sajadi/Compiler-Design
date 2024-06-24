@@ -7,7 +7,7 @@
 from typing import List
 from semantic_analyzer.basic_classes import Function, Variable
 from syntax_analyzer.special_node import Node
-from semantic_analyzer.error_handlers import raise_error
+from semantic_analyzer.error_handlers import raise_error, raise_no_main_error
 
 FUNCTIONS: List[Function] = []
 VARIABLES: List[Variable] = []
@@ -26,6 +26,8 @@ def add_function(self: Node):
     new_function = Function(function_name)
     new_function.return_type = function_return_type
     new_function.entries = self.siblings[0].parameters
+    new_function.declaration_line = line
+    new_function.declaration_inline_index = inline_index
     FUNCTIONS.append(new_function)
 
 
@@ -64,11 +66,17 @@ def set_function_attributes(self: Node):
 def check_main(self: Node):
     for func in FUNCTIONS:
         if func.name == 'main':
+            line = func.declaration_line
+            inline_index = func.declaration_inline_index
+
             if func.return_type != 'int':
-                raise Exception("Main Function Return Type should be int!")
+                raise_error("Main Function Return Type should be int!", line, 0)
+
+            if len(func.entries) != 0:
+                raise_error("Main Function should not have any arguments!", line, inline_index)
             break
     else:
-        raise Exception("No main function")
+        raise_no_main_error("No main function found! Please declare the main function.")
 
 
 def set_type(self: Node):

@@ -12,6 +12,8 @@ class Function:
         self.entries = []
         self.return_type = None
         self.has_return = False
+        self.declaration_line = 0
+        self.declaration_inline_index = 0
 
 
 class Variable:

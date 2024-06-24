@@ -235,7 +235,6 @@ SDD: Final = {
     ],
     'mutable_or_function_call': [
         [set_var_declaration_expected_type_node, 'bracket', set_bracket_type_inuse_end_node],
-        # TODO: complete the call support
         [give_id_name_to_call_node, 'call', give_type_to_parent_in_call_node],
         ['epsilon', set_bracket_type_inuse_end_node],
     ],
