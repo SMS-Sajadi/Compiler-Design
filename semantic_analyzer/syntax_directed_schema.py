@@ -10,7 +10,6 @@ from semantic_analyzer.node_functions import *
 from copy import deepcopy
 
 add_function_node = Node('add_function', is_semantic=True, func=add_function)
-set_function_node = Node('set_function', is_semantic=True, func=set_function_attributes)
 check_main_node = Node('check_main', is_semantic=True, func=check_main)
 set_type_node = Node('set_type', is_semantic=True, func=set_type)
 set_declaration_expected_type_node = Node('set_declaration_expected_type', is_semantic=True,
@@ -77,16 +76,17 @@ set_pre_loop_scope_node = Node('set_pre_loop_scope', is_semantic=True, func=set_
 check_optional_expr_for_node = Node('check_optional_expr_for', is_semantic=True, func=check_optional_expr_for)
 set_stmts_scope_in_for_node = Node('set_stmts_scope_in_for', is_semantic=True, func=set_stmts_scope_in_for)
 set_new_scope_node = Node('set_new_scope', is_semantic=True, func=set_new_scope)
+check_print_node = Node('check_print', is_semantic=True, func=check_print)
 
 
 SDD: Final = {
     'Program': [
-        ['function', add_function_node, 'Program'],
+        ['function', 'Program'],
         ['epsilon', check_main_node],
     ],
     'function': [
-        ['Type', 'T_Id', 'T_LP', set_scope_for_function_params_node, 'function_params', 'T_RP', 'T_LC',
-         give_func_return_type_to_Stmts_node, 'Stmts', 'T_RC', set_function_node],
+        ['Type', 'T_Id', 'T_LP', set_scope_for_function_params_node, 'function_params', add_function_node, 'T_RP',
+         'T_LC', give_func_return_type_to_Stmts_node, 'Stmts', 'T_RC'],
     ],
     'Type': [
         ['T_Int', set_type_node],
@@ -296,7 +296,7 @@ SDD: Final = {
         ['T_LC', set_stmts_scope_in_else_node, 'Stmts', 'T_RC'],
     ],
     'print_statement': [
-        ['T_Print', 'T_LP', 'Args', 'T_RP'],
+        ['T_Print', 'T_LP', set_args_list_node, 'Args', 'T_RP', check_print_node],
     ],
     'unary_assignment': [
         ['T_AOp_PL', 'T_AOp_PL', 'mutable'],

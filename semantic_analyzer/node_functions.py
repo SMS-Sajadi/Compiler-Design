@@ -10,6 +10,7 @@ from syntax_analyzer.special_node import Node
 from semantic_analyzer.scope_nodes import Scope
 from semantic_analyzer.error_handlers import raise_error, raise_no_main_error
 from uuid import uuid4
+import re
 
 FUNCTIONS: List[Function] = []
 VARIABLES: List[Variable] = []
@@ -17,10 +18,10 @@ SCOPES: List[Scope] = []
 
 
 def add_function(self: Node):
-    function_name = self.siblings[0].func_name
+    function_name = self.siblings[1].value
     function_return_type = self.siblings[0].ctype
-    line = self.siblings[0].line
-    inline_index = self.siblings[0].inline_index
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
 
     for func in FUNCTIONS:
         if func.name == function_name:
@@ -28,7 +29,7 @@ def add_function(self: Node):
 
     new_function = Function(function_name)
     new_function.return_type = function_return_type
-    new_function.entries = self.siblings[0].parameters
+    new_function.entries = self.siblings[4].parameters
     new_function.declaration_line = line
     new_function.declaration_inline_index = inline_index
     FUNCTIONS.append(new_function)
@@ -58,14 +59,6 @@ def add_variable(self: Node):
     new_var.scope_end = self.parent.end_scope
     new_var.scope = scope
     VARIABLES.append(new_var)
-
-
-def set_function_attributes(self: Node):
-    self.parent.func_name = self.siblings[1].value
-    self.parent.ctype = self.siblings[0].ctype
-    self.parent.line = self.siblings[1].line
-    self.parent.inline_index = self.siblings[1].inline_index
-    self.parent.parameters = self.siblings[4].parameters
 
 
 def check_main(self: Node):
@@ -234,10 +227,10 @@ def give_type_to_parent_relational(self: Node):
 
 
 def give_func_return_type_to_stmts(self: Node):
-    self.siblings[7].func_return_type = self.siblings[0].ctype
-    self.siblings[7].start_scope = self.siblings[6].line
-    self.siblings[7].end_scope = self.siblings[8].line
-    self.siblings[7].scope = self.siblings[4].scope
+    self.siblings[8].func_return_type = self.siblings[0].ctype
+    self.siblings[8].start_scope = self.siblings[7].line
+    self.siblings[8].end_scope = self.siblings[9].line
+    self.siblings[8].scope = self.siblings[4].scope
 
 
 def give_func_return_type(self: Node):
@@ -366,11 +359,10 @@ def set_assignment_expected_type_for_bracket(self: Node):
 
 
 def set_scope_for_function_params(self: Node):
-    self.siblings[3].start_scope = self.siblings[5].line
-    self.siblings[3].end_scope = self.siblings[8].line
+    self.siblings[3].start_scope = self.siblings[6].line
+    self.siblings[3].end_scope = self.siblings[9].line
     self.siblings[3].parameters = []
     self.siblings[3].scope = Scope(str(uuid4()))
-    # TODO: DO we Need a List of Scopes?
 
 
 def give_scope_to_others(self: Node):
@@ -435,7 +427,8 @@ def get_id_type(self: Node):
 
 
 def set_args_list(self: Node):
-    self.siblings[1].args_list = []
+    idx = 2 if self.siblings[0].name == 'T_Print' else 1
+    self.siblings[idx].args_list = []
 
 
 def give_args_list_to_next(self: Node):
@@ -535,3 +528,15 @@ def set_new_scope(self: Node):
     self.siblings[1].start_scope = self.siblings[0].line
     self.siblings[1].end_scope = self.siblings[2].line
     self.siblings[1].scope = Scope(str(uuid4()), self.parent.scope)
+
+
+def check_print(self: Node):
+    args = self.siblings[3].args_list
+    line = args[0][1]
+    inline_index = args[0][2]
+
+    pattern = r'array\(\d*, char\)|char'
+
+    if not re.match(pattern, args[0][0]):
+        raise_error(f"The First argument of print is a string or char, but {args[0][0]} is given!",
+                    line, inline_index)
