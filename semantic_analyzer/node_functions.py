@@ -528,3 +528,10 @@ def set_stmts_scope_in_for(self: Node):
     self.siblings[10].start_scope = self.siblings[9].line
     self.siblings[10].end_scope = self.siblings[11].line
     self.siblings[10].scope = self.siblings[3].scope
+
+
+def set_new_scope(self: Node):
+    self.siblings[1].func_return_type = self.parent.func_return_type
+    self.siblings[1].start_scope = self.siblings[0].line
+    self.siblings[1].end_scope = self.siblings[2].line
+    self.siblings[1].scope = Scope(str(uuid4()), self.parent.scope)

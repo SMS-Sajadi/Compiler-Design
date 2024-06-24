@@ -76,6 +76,7 @@ set_stmts_scope_in_else_node = Node('set_stmts_scope_in_else', is_semantic=True,
 set_pre_loop_scope_node = Node('set_pre_loop_scope', is_semantic=True, func=set_pre_loop_scope)
 check_optional_expr_for_node = Node('check_optional_expr_for', is_semantic=True, func=check_optional_expr_for)
 set_stmts_scope_in_for_node = Node('set_stmts_scope_in_for', is_semantic=True, func=set_stmts_scope_in_for)
+set_new_scope_node = Node('set_new_scope', is_semantic=True, func=set_new_scope)
 
 
 SDD: Final = {
@@ -119,6 +120,7 @@ SDD: Final = {
         [give_func_return_type_node, 'if_statement'],
         ['print_statement', 'T_Semicolon'],
         ['unary_assignment', 'T_Semicolon'],
+        [set_new_scope_node, 'T_LC', 'Stmts', 'T_RC'],
     ],
     'Declaration': [
         ['Type', set_declaration_expected_type_node, 'Declarations'],
