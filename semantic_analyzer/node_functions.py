@@ -305,6 +305,7 @@ def set_bracket_type_inuse_end(self: Node):
 
 
 def set_bracket_type_in_exp(self: Node):
+    id_name = self.siblings[0].value
     line = self.siblings[0].line
     inline_index = self.siblings[0].inline_index
 
@@ -314,14 +315,17 @@ def set_bracket_type_in_exp(self: Node):
     has_declared = False
 
     for var in VARIABLES:
-        if var.name == self.siblings[0].value and var.scope_end >= line >= var.scope_start:
+        if var.name == id_name and var.scope_end >= line >= var.scope_start:
             self.siblings[1].base_type = var.ctype
             has_declared = True
             break
 
     for func in FUNCTIONS:
-        if func.name == self.siblings[0].value:
+        if func.name == id_name:
             self.siblings[1].base_type = func.return_type
+            self.siblings[1].id_name = id_name
+            self.siblings[1].line = line
+            self.siblings[1].inline_index = inline_index
             has_declared = True
             break
 
@@ -450,3 +454,7 @@ def give_id_name_to_call(self: Node):
     self.siblings[0].func_name = self.parent.id_name
     self.siblings[0].line = self.parent.line
     self.siblings[0].inline_index = self.parent.inline_index
+
+
+def give_type_to_parent_in_call(self: Node):
+    self.parent.ctype = self.parent.base_type

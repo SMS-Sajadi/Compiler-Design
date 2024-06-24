@@ -69,6 +69,8 @@ add_argument_node = Node('add_argument', is_semantic=True, func=add_argument)
 give_args_list_to_next_node = Node('give_args_list_to_next', is_semantic=True, func=give_args_list_to_next)
 check_call_node = Node('check_call', is_semantic=True, func=check_call)
 give_id_name_to_call_node = Node('give_id_name_to_call', is_semantic=True, func=give_id_name_to_call)
+give_type_to_parent_in_call_node = Node('give_type_to_parent_in_call', is_semantic=True,
+                                        func=give_type_to_parent_in_call)
 
 
 SDD: Final = {
@@ -151,7 +153,7 @@ SDD: Final = {
         ['epsilon', check_assignment_state_node],
     ],
     'check_call': [
-        [give_id_name_to_call_node, 'call'],  # TODO: Complete
+        [give_id_name_to_call_node, 'call'],
         [set_bracket_base_type_in_check_call_node, 'bracket', set_assignment_expected_type_for_bracket_node,
          'Assign'],
         [set_assignment_expected_type_node, 'Assign'],
@@ -234,7 +236,7 @@ SDD: Final = {
     'mutable_or_function_call': [
         [set_var_declaration_expected_type_node, 'bracket', set_bracket_type_inuse_end_node],
         # TODO: complete the call support
-        ['call'],
+        [give_id_name_to_call_node, 'call', give_type_to_parent_in_call_node],
         ['epsilon', set_bracket_type_inuse_end_node],
     ],
     'call': [
