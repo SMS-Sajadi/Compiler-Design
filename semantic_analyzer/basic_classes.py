@@ -18,3 +18,5 @@ class Variable:
     def __init__(self, name):
         self.name = name
         self.ctype = None
+        self.scope_start = -1
+        self.scope_end = -1

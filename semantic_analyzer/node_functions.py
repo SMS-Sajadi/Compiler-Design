@@ -25,6 +25,7 @@ def add_function(self: Node):
 
     new_function = Function(function_name)
     new_function.return_type = function_return_type
+    new_function.entries = self.siblings[0].parameters
     FUNCTIONS.append(new_function)
 
 
@@ -35,8 +36,8 @@ def add_variable(self: Node):
     inline_index = self.siblings[1].inline_index
 
     for var in VARIABLES:
-        if var.name == var_name:
-            raise_error("Variable already exists", line, inline_index)
+        if var.name == var_name and var.scope_end >= line >= var.scope_start:
+            raise_error(f"You have declared the variable in line {var.scope_start}", line, inline_index)
 
     assignment_type = self.siblings[2].ctype
     inline_index += len(var_name) + 2
@@ -47,6 +48,8 @@ def add_variable(self: Node):
 
     new_var = Variable(var_name)
     new_var.ctype = var_type
+    new_var.scope_start = self.siblings[1].line
+    new_var.scope_end = self.parent.end_scope
     VARIABLES.append(new_var)
 
 
@@ -55,6 +58,7 @@ def set_function_attributes(self: Node):
     self.parent.ctype = self.siblings[0].ctype
     self.parent.line = self.siblings[1].line
     self.parent.inline_index = self.siblings[1].inline_index
+    self.parent.parameters = self.siblings[4].parameters
 
 
 def check_main(self: Node):
@@ -75,11 +79,15 @@ def set_type(self: Node):
 
 def set_declaration_expected_type(self: Node):
     self.siblings[1].base_type = self.siblings[0].ctype
+    self.siblings[1].start_scope = self.parent.start_scope
+    self.siblings[1].end_scope = self.parent.end_scope
 
 
 def set_var_declaration_expected_type(self: Node):
     for node in self.siblings:
         node.base_type = self.parent.base_type
+        node.start_scope = self.parent.start_scope
+        node.end_scope = self.parent.end_scope
 
 
 def set_bracket_type(self: Node):
@@ -211,12 +219,16 @@ def give_type_to_parent_relational(self: Node):
 
 
 def give_func_return_type_to_stmts(self: Node):
-    self.siblings[6].func_return_type = self.siblings[0].ctype
+    self.siblings[7].func_return_type = self.siblings[0].ctype
+    self.siblings[7].start_scope = self.siblings[6].line
+    self.siblings[7].end_scope = self.siblings[8].line
 
 
 def give_func_return_type(self: Node):
     for node in self.siblings:
         node.func_return_type = self.parent.func_return_type
+        node.start_scope = self.parent.start_scope
+        node.end_scope = self.parent.end_scope
 
 
 def set_return_state(self: Node):
@@ -332,12 +344,62 @@ def set_assignment_expected_type_for_bracket(self: Node):
     self.siblings[2].expected_type = self.siblings[1].ctype
 
 
+def set_scope_for_function_params(self: Node):
+    self.siblings[3].start_scope = self.siblings[5].line
+    self.siblings[3].end_scope = self.siblings[8].line
+    self.siblings[3].parameters = []
+
+
+def give_scope_to_others(self: Node):
+    for node in self.siblings:
+        node.start_scope = self.parent.start_scope
+        node.end_scope = self.parent.end_scope
+
+        if self.parent.name in ["function_params", "params_list"]:
+            node.parameters = self.parent.parameters
+
+
+def set_bracket_base_type_in_function_def(self: Node):
+    self.siblings[2].base_type = self.siblings[0].ctype
+
+
+def add_parameter(self: Node):
+    var_name = self.siblings[1].value
+    var_type = self.siblings[3].ctype
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
+    scope_start = self.parent.start_scope
+    scope_end = self.parent.end_scope
+
+    for var in VARIABLES:
+        if var.name == var_name and var.scope_end >= line >= var.scope_start:
+            raise_error(f"You have declared the variable in line {var.scope_start}", line, inline_index)
+
+    new_var = Variable(var_name)
+    new_var.ctype = var_type
+    new_var.scope_start = scope_start
+    new_var.scope_end = scope_end
+    VARIABLES.append(new_var)
+    self.parent.parameters.append(new_var)
+
+
 def get_id_type(self: Node):
     id_name = self.siblings[0].value
+    line = self.siblings[0].line
+    inline_index = self.siblings[0].inline_index
+    has_declared = False
 
     for variable in VARIABLES:
-        if variable.name == id_name:
+        if variable.name == id_name and variable.scope_end >= line >= variable.scope_start:
             self.siblings[1].expected_type = variable.ctype
+            has_declared = True
 
-    # TODO: Check if it is needed to be continued for Functions
+    for func in FUNCTIONS:
+        if func.name == id_name:
+            has_declared = True
+            break
+
+    if not has_declared:
+        raise_error("You must declare the variable first!", line, inline_index)
+
     # TODO: Prevent from creating a var with the name of a function

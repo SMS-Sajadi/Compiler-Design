@@ -58,6 +58,12 @@ set_bracket_base_type_in_check_call_node = Node('set_bracket_base_type_in_check_
                                                 func=set_bracket_base_type_in_check_call)
 set_assignment_expected_type_for_bracket_node = Node('set_assignment_expected_type_for_bracket', is_semantic=True,
                                                      func=set_assignment_expected_type_for_bracket)
+set_scope_for_function_params_node = Node('set_scope_for_function_params', is_semantic=True,
+                                          func=set_scope_for_function_params)
+give_scope_to_others_node = Node('give_scope_to_others', is_semantic=True, func=give_scope_to_others)
+set_bracket_base_type_in_function_def_node = Node('set_bracket_base_type_in_function_def', is_semantic=True,
+                                                  func=set_bracket_base_type_in_function_def)
+add_parameter_node = Node('add_parameter', is_semantic=True, func=add_parameter)
 
 
 SDD: Final = {
@@ -66,8 +72,8 @@ SDD: Final = {
         ['epsilon', check_main_node],
     ],
     'function': [
-        ['Type', 'T_Id', 'T_LP', 'function_params', 'T_RP', 'T_LC', give_func_return_type_to_Stmts_node,
-         'Stmts', 'T_RC', set_function_node],
+        ['Type', 'T_Id', 'T_LP', set_scope_for_function_params_node, 'function_params', 'T_RP', 'T_LC',
+         give_func_return_type_to_Stmts_node, 'Stmts', 'T_RC', set_function_node],
     ],
     'Type': [
         ['T_Int', set_type_node],
@@ -75,15 +81,15 @@ SDD: Final = {
         ['T_Bool', set_type_node],
     ],
     'function_params': [
-        ['param', 'params_list'],
+        [give_scope_to_others_node, 'param', 'params_list'],
         ['epsilon'],
     ],
     'params_list': [
-        ['T_Comma', 'param', 'params_list'],
+        [give_scope_to_others_node, 'T_Comma', 'param', 'params_list'],
         ['epsilon'],
     ],
     'param': [
-        ['Type', 'T_Id', 'const_bracket'],
+        ['Type', 'T_Id', set_bracket_base_type_in_function_def_node, 'const_bracket', add_parameter_node],
     ],
     'const_bracket': [
         ['T_LB', 'const', 'T_RB', set_bracket_base_type_node, 'const_bracket', set_bracket_type_node],
@@ -94,7 +100,7 @@ SDD: Final = {
         ['epsilon'],
     ],
     'stmt': [
-        ['Declaration', 'T_Semicolon'],
+        [give_scope_to_others_node, 'Declaration', 'T_Semicolon'],
         [give_func_return_type_node, 'other_stmt'],
         ['Assignment', 'T_Semicolon'],
         ['for_statement'],
