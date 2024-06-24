@@ -71,6 +71,8 @@ check_call_node = Node('check_call', is_semantic=True, func=check_call)
 give_id_name_to_call_node = Node('give_id_name_to_call', is_semantic=True, func=give_id_name_to_call)
 give_type_to_parent_in_call_node = Node('give_type_to_parent_in_call', is_semantic=True,
                                         func=give_type_to_parent_in_call)
+set_stmts_scope_in_if_node = Node('set_stmts_scope_in_if', is_semantic=True, func=set_stmts_scope_in_if)
+set_stmts_scope_in_else_node = Node('set_stmts_scope_in_else', is_semantic=True, func=set_stmts_scope_in_else)
 
 
 SDD: Final = {
@@ -111,7 +113,7 @@ SDD: Final = {
         [give_func_return_type_node, 'other_stmt'],
         ['Assignment', 'T_Semicolon'],
         ['for_statement'],
-        ['if_statement'],
+        [give_func_return_type_node, 'if_statement'],
         ['print_statement', 'T_Semicolon'],
         ['unary_assignment', 'T_Semicolon'],
     ],
@@ -275,18 +277,18 @@ SDD: Final = {
         ['epsilon'],
     ],
     'if_statement': [
-        ['T_If', 'T_LP', 'Exp', 'T_RP', 'T_LC', 'Stmts', 'T_RC', 'else_if'],
+        ['T_If', 'T_LP', 'Exp', 'T_RP', 'T_LC', set_stmts_scope_in_if_node, 'Stmts', 'T_RC', 'else_if'],
     ],
     'else_if': [
-        ['T_Else', 'check_if'],
+        [give_func_return_type_node, 'T_Else', 'check_if'],
         ['epsilon'],
     ],
     'check_if': [
-        ['if_statement'],
-        ['statement'],
+        [give_func_return_type_node, 'if_statement'],
+        [give_func_return_type_node, 'statement'],
     ],
     'statement': [
-        ['T_LC', 'Stmts', 'T_RC'],
+        ['T_LC', set_stmts_scope_in_else_node, 'Stmts', 'T_RC'],
     ],
     'print_statement': [
         ['T_Print', 'T_LP', 'Args', 'T_RP'],

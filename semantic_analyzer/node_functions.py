@@ -466,3 +466,26 @@ def give_id_name_to_call(self: Node):
 
 def give_type_to_parent_in_call(self: Node):
     self.parent.ctype = self.parent.base_type
+
+
+def set_stmts_scope_in_if(self: Node):
+    self.siblings[5].func_return_type = self.parent.func_return_type
+    self.siblings[7].func_return_type = self.parent.func_return_type
+    self.siblings[7].start_scope = self.parent.start_scope
+    self.siblings[7].end_scope = self.parent.end_scope
+    self.siblings[5].start_scope = self.siblings[4].line
+    self.siblings[5].end_scope = self.siblings[6].line
+
+    expression_type = self.siblings[2].ctype
+    line = self.siblings[2].line
+    inline_index = self.siblings[2].inline_index
+
+    if expression_type != "bool":
+        raise_error(f"You have used {expression_type} in the if clause, but it should be a bool expression!",
+                    line, inline_index)
+
+
+def set_stmts_scope_in_else(self: Node):
+    self.siblings[1].func_return_type = self.parent.func_return_type
+    self.siblings[1].start_scope = self.siblings[0].line
+    self.siblings[1].end_scope = self.siblings[2].line
