@@ -264,7 +264,7 @@ def give_base_type_to_bracket(self: Node):
     inline_index = self.siblings[0].inline_index
 
     for var in VARIABLES:
-        if var.name == self.siblings[0].value:
+        if var.name == self.siblings[0].value and var.scope_end >= line >= var.scope_start:
             self.siblings[1].base_type = var.ctype
             break
     else:
@@ -396,6 +396,9 @@ def get_id_type(self: Node):
 
     for func in FUNCTIONS:
         if func.name == id_name:
+            self.siblings[1].id_name = id_name
+            self.siblings[1].line = line
+            self.siblings[1].inline_index = inline_index
             has_declared = True
             break
 
@@ -403,3 +406,47 @@ def get_id_type(self: Node):
         raise_error("You must declare the variable first!", line, inline_index)
 
     # TODO: Prevent from creating a var with the name of a function
+
+
+def set_args_list(self: Node):
+    self.siblings[1].args_list = []
+
+
+def give_args_list_to_next(self: Node):
+    for node in self.siblings:
+        node.args_list = self.parent.args_list
+
+
+def add_argument(self: Node):
+    idx = 1 if len(self.siblings) == 3 else 2
+    self.parent.args_list.append((self.siblings[idx].ctype, self.siblings[idx].line, self.siblings[idx].inline_index))
+
+
+def check_call(self: Node):
+    func_name = self.parent.func_name
+    line = self.parent.line
+    inline_index = self.parent.inline_index
+
+    for func in FUNCTIONS:
+        if func.name == func_name:
+            parameters = func.entries
+            args = self.siblings[2].args_list
+
+            if len(parameters) != len(args):
+                raise_error(f"The function has {len(parameters)} parameters but {len(args)} arguments given!",
+                            line, inline_index)
+
+            for parameter, arg in zip(parameters, args):
+                if parameter.ctype != arg[0]:
+                    raise_error(f"The expected type is {parameter.ctype}, but the entry type is {arg[0]}!", arg[1],
+                                arg[2])
+
+            break
+    else:
+        raise_error(f"{func_name} is not callable!", line, inline_index)
+
+
+def give_id_name_to_call(self: Node):
+    self.siblings[0].func_name = self.parent.id_name
+    self.siblings[0].line = self.parent.line
+    self.siblings[0].inline_index = self.parent.inline_index

@@ -64,6 +64,11 @@ give_scope_to_others_node = Node('give_scope_to_others', is_semantic=True, func=
 set_bracket_base_type_in_function_def_node = Node('set_bracket_base_type_in_function_def', is_semantic=True,
                                                   func=set_bracket_base_type_in_function_def)
 add_parameter_node = Node('add_parameter', is_semantic=True, func=add_parameter)
+set_args_list_node = Node('set_args_list', is_semantic=True, func=set_args_list)
+add_argument_node = Node('add_argument', is_semantic=True, func=add_argument)
+give_args_list_to_next_node = Node('give_args_list_to_next', is_semantic=True, func=give_args_list_to_next)
+check_call_node = Node('check_call', is_semantic=True, func=check_call)
+give_id_name_to_call_node = Node('give_id_name_to_call', is_semantic=True, func=give_id_name_to_call)
 
 
 SDD: Final = {
@@ -146,7 +151,7 @@ SDD: Final = {
         ['epsilon', check_assignment_state_node],
     ],
     'check_call': [
-        ['call'],  # TODO: Complete
+        [give_id_name_to_call_node, 'call'],  # TODO: Complete
         [set_bracket_base_type_in_check_call_node, 'bracket', set_assignment_expected_type_for_bracket_node,
          'Assign'],
         [set_assignment_expected_type_node, 'Assign'],
@@ -157,11 +162,11 @@ SDD: Final = {
         ['T_Return', 'Exp', 'T_Semicolon', set_return_state_node],
     ],
     'Args': [
-        ['Exp', 'Args_list'],
+        [give_args_list_to_next_node, 'Exp', add_argument_node, 'Args_list'],
         ['epsilon'],
     ],
     'Args_list': [
-        ['T_Comma', 'Exp', 'Args_list'],
+        [give_args_list_to_next_node, 'T_Comma', 'Exp', add_argument_node, 'Args_list'],
         ['epsilon'],
     ],
     'Assignment': [
@@ -233,7 +238,7 @@ SDD: Final = {
         ['epsilon', set_bracket_type_inuse_end_node],
     ],
     'call': [
-        ['T_LP', 'Args', 'T_RP'],
+        ['T_LP', set_args_list_node, 'Args', 'T_RP', check_call_node],
     ],
     'immutable': [
         ['T_LP', 'Exp', 'T_RP', set_immutable_type_numeric],
