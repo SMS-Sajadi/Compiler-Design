@@ -15,6 +15,11 @@ def raise_error(msg: str, line: int, inline_index: int) -> SystemError:
     raise exception
 
 
+def raise_no_main_error(msg: str) -> SystemError:
+    exception = SystemError(msg)
+    raise exception
+
+
 def set_program_for_semantic_error(program: str) -> None:
     """
     This function will set the Program for using by error handler
