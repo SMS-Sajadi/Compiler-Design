@@ -126,7 +126,7 @@ def set_declaration_var(self: Node):
 
 
 def set_declaration_assign(self: Node):
-    if len(self.siblings) != 1:
+    if len(self.siblings) == 3:
         self.parent.ctype = self.siblings[-1].ctype
         self.parent.line = self.siblings[-1].line
         self.parent.inline_index = self.siblings[-1].inline_index
@@ -135,63 +135,59 @@ def set_declaration_assign(self: Node):
 
 
 def set_const_value(self: Node):
-    self.parent.value = self.siblings[0].value
-    self.parent.ctype = self.siblings[0].ctype
-    self.parent.line = self.siblings[0].line
-    self.parent.inline_index = self.siblings[0].inline_index
+    idx = 0 if len(self.siblings) == 1 else 1
+
+    self.parent.value = self.siblings[idx].value
+    self.parent.ctype = self.siblings[idx].ctype
+    self.parent.line = self.siblings[idx].line
+    self.parent.inline_index = self.siblings[idx].inline_index
 
 
-def set_immutable_type_numeric(self: Node):
-    self.parent.ctype = self.siblings[1].ctype
-    self.parent.line = self.siblings[1].line
-    self.parent.inline_index = self.siblings[1].inline_index
-
-
-def set_immutable_type_relational(self: Node):
-    self.parent.ctype = self.siblings[1].ctype
-    self.parent.line = self.siblings[1].line
-    self.parent.inline_index = self.siblings[1].inline_index
+def set_immutable_type(self: Node):
+    self.parent.ctype = self.siblings[2].ctype
+    self.parent.line = self.siblings[2].line
+    self.parent.inline_index = self.siblings[2].inline_index
 
 
 def give_type_to_next_numeric(self: Node):
-    if len(self.siblings) == 3:
-        self.siblings[1].base_type = self.siblings[0].ctype
-        self.siblings[1].line = self.siblings[0].line
-        self.siblings[1].inline_index = self.siblings[0].inline_index
-    else:
-        line = self.siblings[1].line
-        inline_index = self.siblings[1].inline_index
-
-        if self.siblings[1].ctype != "int":
-            raise_error("You can't Use non numeric values!", line, inline_index)
-
+    if len(self.siblings) == 4:
         self.siblings[2].base_type = self.siblings[1].ctype
         self.siblings[2].line = self.siblings[1].line
         self.siblings[2].inline_index = self.siblings[1].inline_index
+    else:
+        line = self.siblings[2].line
+        inline_index = self.siblings[2].inline_index
+
+        if self.siblings[2].ctype != "int":
+            raise_error("You can't Use non numeric values!", line, inline_index)
+
+        self.siblings[3].base_type = self.siblings[2].ctype
+        self.siblings[3].line = self.siblings[2].line
+        self.siblings[3].inline_index = self.siblings[2].inline_index
 
 
 def give_type_to_next_relational(self: Node):
-    if len(self.siblings) == 3:
-        self.siblings[1].base_type = self.siblings[0].ctype
-        self.siblings[1].line = self.siblings[0].line
-        self.siblings[1].inline_index = self.siblings[0].inline_index
-    else:
-        line = self.siblings[1].line
-        inline_index = self.siblings[1].inline_index
-
-        if self.siblings[1].ctype != self.parent.base_type:
-            raise_error("When You are Comparing, both sides should have the same type!", line, inline_index)
-
+    if len(self.siblings) == 4:
         self.siblings[2].base_type = self.siblings[1].ctype
         self.siblings[2].line = self.siblings[1].line
         self.siblings[2].inline_index = self.siblings[1].inline_index
+    else:
+        line = self.siblings[2].line
+        inline_index = self.siblings[2].inline_index
+
+        if self.siblings[2].ctype != self.parent.base_type:
+            raise_error("When You are Comparing, both sides should have the same type!", line, inline_index)
+
+        self.siblings[3].base_type = self.siblings[2].ctype
+        self.siblings[3].line = self.siblings[2].line
+        self.siblings[3].inline_index = self.siblings[2].inline_index
 
 
 def give_type_to_next_logical(self: Node):
-    if len(self.siblings) == 3:
-        self.siblings[1].base_type = self.siblings[0].ctype
-        self.siblings[1].line = self.siblings[0].line
-        self.siblings[1].inline_index = self.siblings[0].inline_index
+    if len(self.siblings) == 4:
+        self.siblings[2].base_type = self.siblings[1].ctype
+        self.siblings[2].line = self.siblings[1].line
+        self.siblings[2].inline_index = self.siblings[1].inline_index
     else:
         line = self.parent.line
         inline_index = self.parent.inline_index
@@ -199,15 +195,15 @@ def give_type_to_next_logical(self: Node):
         if self.parent.base_type != "bool":
             raise_error("You must use a logical expression!", line, inline_index)
 
-        line = self.siblings[1].line
-        inline_index = self.siblings[1].inline_index
+        line = self.siblings[2].line
+        inline_index = self.siblings[2].inline_index
 
-        if self.siblings[1].ctype != "bool":
+        if self.siblings[2].ctype != "bool":
             raise_error("You must use a logical expression!", line, inline_index)
 
-        self.siblings[2].base_type = self.siblings[1].ctype
-        self.siblings[2].line = self.siblings[1].line
-        self.siblings[2].inline_index = self.siblings[1].inline_index
+        self.siblings[3].base_type = self.siblings[2].ctype
+        self.siblings[3].line = self.siblings[2].line
+        self.siblings[3].inline_index = self.siblings[2].inline_index
 
 
 def give_type_to_parent_end(self: Node):
@@ -243,9 +239,9 @@ def give_func_return_type(self: Node):
 
 def set_return_state(self: Node):
     func_return_type = self.parent.func_return_type
-    return_expr_type = self.siblings[1].ctype
-    line = self.siblings[1].line
-    inline_index = self.siblings[1].inline_index
+    return_expr_type = self.siblings[2].ctype
+    line = self.siblings[2].line
+    inline_index = self.siblings[2].inline_index
 
     if func_return_type != return_expr_type:
         raise_error(f"Function Return Type is {func_return_type}, but you have returned {return_expr_type}!",
@@ -254,11 +250,11 @@ def set_return_state(self: Node):
 
 def check_assignment_state(self: Node):
     expected_type = self.parent.expected_type
-    expression_type = self.siblings[-1].ctype if len(self.siblings) > 1 else "epsilon"
+    expression_type = self.siblings[-1].ctype if len(self.siblings) > 2 else "epsilon"
     line = self.siblings[-1].line
     inline_index = self.siblings[-1].inline_index
 
-    if len(self.siblings) == 3 and expected_type != "int":
+    if len(self.siblings) == 4 and expected_type != "int":
         raise_error("You can't use arithmatic assignment for non numeric values!", line, 0)
 
     if expected_type != expression_type and expected_type != "epsilon":
@@ -267,24 +263,39 @@ def check_assignment_state(self: Node):
 
 def set_assignment_expected_type(self: Node):
     self.siblings[0].expected_type = self.parent.expected_type
+    self.siblings[0].scope = self.parent.scope
+    self.siblings[0].start_scope = self.parent.start_scope
+    self.siblings[0].end_scope = self.parent.end_scope
 
 
 def give_base_type_to_bracket(self: Node):
     line = self.siblings[0].line
     inline_index = self.siblings[0].inline_index
+    scope = self.parent.scope
 
-    for var in VARIABLES:
-        if var.name == self.siblings[0].value and var.scope_end >= line >= var.scope_start:
-            self.siblings[1].base_type = var.ctype
+    has_declared = False
+
+    while scope:
+        for var in VARIABLES:
+            if var.name == self.siblings[0].value and var.scope_end >= line >= var.scope_start and scope == var.scope:
+                self.siblings[1].base_type = var.ctype
+                has_declared = True
+                break
+        if has_declared:
             break
+        scope = scope.parent
     else:
         raise_error("You must declare the variable first!", line, inline_index)
 
+    self.siblings[1].scope = self.parent.scope
+    self.siblings[1].start_scope = self.parent.start_scope
+    self.siblings[1].end_scope = self.parent.end_scope
+
 
 def set_bracket_type_inuse(self: Node):
-    bracket_index_type = self.siblings[1].ctype
-    line = self.siblings[1].line
-    inline_index = self.siblings[1].inline_index
+    bracket_index_type = self.siblings[2].ctype
+    line = self.siblings[2].line
+    inline_index = self.siblings[2].inline_index
 
     if bracket_index_type != "int":
         raise_error("You must use an int expression as the bracket index!", line, inline_index)
@@ -293,7 +304,7 @@ def set_bracket_type_inuse(self: Node):
     try:
         idx = base_type.index(',')
         new_base_type = base_type[idx + 2:-1]
-        self.siblings[3].base_type = new_base_type
+        self.siblings[4].base_type = new_base_type
     except ValueError:
         raise_error(f"The type is {base_type} and you can't add any more brackets", line, inline_index)
 
@@ -315,27 +326,33 @@ def set_bracket_type_inuse_end(self: Node):
 
 
 def set_bracket_type_in_exp(self: Node):
-    id_name = self.siblings[0].value
-    line = self.siblings[0].line
-    inline_index = self.siblings[0].inline_index
+    id_name = self.siblings[1].value
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
 
-    self.siblings[1].line = line
-    self.siblings[1].inline_index = inline_index
+    self.siblings[2].line = line
+    self.siblings[2].inline_index = inline_index
 
     has_declared = False
 
-    for var in VARIABLES:
-        if var.name == id_name and var.scope_end >= line >= var.scope_start:
-            self.siblings[1].base_type = var.ctype
-            has_declared = True
+    scope = self.parent.scope
+
+    while scope:
+        for var in VARIABLES:
+            if var.name == id_name and var.scope_end >= line >= var.scope_start and scope == var.scope:
+                self.siblings[2].base_type = var.ctype
+                has_declared = True
+                break
+        if has_declared:
             break
+        scope = scope.parent
 
     for func in FUNCTIONS:
         if func.name == id_name:
-            self.siblings[1].base_type = func.return_type
-            self.siblings[1].id_name = id_name
-            self.siblings[1].line = line
-            self.siblings[1].inline_index = inline_index
+            self.siblings[2].base_type = func.return_type
+            self.siblings[2].id_name = id_name
+            self.siblings[2].line = line
+            self.siblings[2].inline_index = inline_index
             has_declared = True
             break
 
@@ -344,18 +361,24 @@ def set_bracket_type_in_exp(self: Node):
 
 
 def give_type_to_parent_mutable_or_function(self: Node):
-    self.parent.value = self.siblings[2].value
-    self.parent.ctype = self.siblings[2].ctype
-    self.parent.line = self.siblings[2].line
-    self.parent.inline_index = self.siblings[2].inline_index
+    self.parent.value = self.siblings[-1].value
+    self.parent.ctype = self.siblings[-1].ctype
+    self.parent.line = self.siblings[-1].line
+    self.parent.inline_index = self.siblings[-1].inline_index
 
 
 def set_bracket_base_type_in_check_call(self: Node):
     self.siblings[0].base_type = self.parent.expected_type
+    self.siblings[0].scope = self.parent.scope
+    self.siblings[0].start_scope = self.parent.start_scope
+    self.siblings[0].end_scope = self.parent.end_scope
 
 
 def set_assignment_expected_type_for_bracket(self: Node):
     self.siblings[2].expected_type = self.siblings[1].ctype
+    self.siblings[2].scope = self.parent.scope
+    self.siblings[2].start_scope = self.parent.start_scope
+    self.siblings[2].end_scope = self.parent.end_scope
 
 
 def set_scope_for_function_params(self: Node):
@@ -402,21 +425,28 @@ def add_parameter(self: Node):
 
 
 def get_id_type(self: Node):
-    id_name = self.siblings[0].value
-    line = self.siblings[0].line
-    inline_index = self.siblings[0].inline_index
+    id_name = self.siblings[1].value
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
     has_declared = False
 
-    for variable in VARIABLES:
-        if variable.name == id_name and variable.scope_end >= line >= variable.scope_start:
-            self.siblings[1].expected_type = variable.ctype
-            has_declared = True
+    scope = self.parent.scope
+
+    while scope:
+        for variable in VARIABLES:
+            if variable.name == id_name and variable.scope_end >= line >= variable.scope_start and scope == variable.scope:
+                self.siblings[2].expected_type = variable.ctype
+                has_declared = True
+                break
+        if has_declared:
+            break
+        scope = scope.parent
 
     for func in FUNCTIONS:
         if func.name == id_name:
-            self.siblings[1].id_name = id_name
-            self.siblings[1].line = line
-            self.siblings[1].inline_index = inline_index
+            self.siblings[2].id_name = id_name
+            self.siblings[2].line = line
+            self.siblings[2].inline_index = inline_index
             has_declared = True
             break
 
@@ -429,11 +459,17 @@ def get_id_type(self: Node):
 def set_args_list(self: Node):
     idx = 2 if self.siblings[0].name == 'T_Print' else 1
     self.siblings[idx].args_list = []
+    self.siblings[idx].scope = self.parent.scope
+    self.siblings[idx].start_scope = self.parent.start_scope
+    self.siblings[idx].end_scope = self.parent.end_scope
 
 
 def give_args_list_to_next(self: Node):
     for node in self.siblings:
         node.args_list = self.parent.args_list
+        node.scope = self.parent.scope
+        node.start_scope = self.parent.start_scope
+        node.end_scope = self.parent.end_scope
 
 
 def add_argument(self: Node):
@@ -469,6 +505,9 @@ def give_id_name_to_call(self: Node):
     self.siblings[0].func_name = self.parent.id_name
     self.siblings[0].line = self.parent.line
     self.siblings[0].inline_index = self.parent.inline_index
+    self.siblings[0].scope = self.parent.scope
+    self.siblings[0].start_scope = self.parent.start_scope
+    self.siblings[0].end_scope = self.parent.end_scope
 
 
 def give_type_to_parent_in_call(self: Node):
@@ -476,18 +515,18 @@ def give_type_to_parent_in_call(self: Node):
 
 
 def set_stmts_scope_in_if(self: Node):
-    self.siblings[5].func_return_type = self.parent.func_return_type
-    self.siblings[7].func_return_type = self.parent.func_return_type
-    self.siblings[7].start_scope = self.parent.start_scope
-    self.siblings[7].end_scope = self.parent.end_scope
-    self.siblings[7].scope = self.parent.scope
-    self.siblings[5].start_scope = self.siblings[4].line
-    self.siblings[5].end_scope = self.siblings[6].line
-    self.siblings[5].scope = Scope(str(uuid4()), parent=self.parent.scope)
+    self.siblings[6].func_return_type = self.parent.func_return_type
+    self.siblings[8].func_return_type = self.parent.func_return_type
+    self.siblings[8].start_scope = self.parent.start_scope
+    self.siblings[8].end_scope = self.parent.end_scope
+    self.siblings[8].scope = self.parent.scope
+    self.siblings[6].start_scope = self.siblings[5].line
+    self.siblings[6].end_scope = self.siblings[7].line
+    self.siblings[6].scope = Scope(str(uuid4()), parent=self.parent.scope)
 
-    expression_type = self.siblings[2].ctype
-    line = self.siblings[2].line
-    inline_index = self.siblings[2].inline_index
+    expression_type = self.siblings[3].ctype
+    line = self.siblings[3].line
+    inline_index = self.siblings[3].inline_index
 
     if expression_type != "bool":
         raise_error(f"You have used {expression_type} in the if clause, but it should be a bool expression!",
@@ -505,14 +544,20 @@ def set_pre_loop_scope(self: Node):
     self.siblings[2].start_scope = self.siblings[0].line
     self.siblings[2].end_scope = self.siblings[11].line
     self.siblings[2].scope = Scope(str(uuid4()), parent=self.parent.scope)
+    self.siblings[4].scope = self.siblings[2].scope
+    self.siblings[4].start_scope = self.siblings[0].line
+    self.siblings[4].end_scope = self.siblings[11].line
+    self.siblings[6].scope = self.siblings[2].scope
+    self.siblings[6].start_scope = self.siblings[0].line
+    self.siblings[6].end_scope = self.siblings[11].line
 
 
 def check_optional_expr_for(self: Node):
-    line = self.siblings[0].line
-    inline_index = self.siblings[0].inline_index
+    line = self.siblings[1].line
+    inline_index = self.siblings[1].inline_index
 
-    if self.siblings[0].ctype != "bool":
-        raise_error(f"You have used a {self.siblings[0].ctype} expression, but it must be a bool expression!",
+    if self.siblings[1].ctype != "bool":
+        raise_error(f"You have used a {self.siblings[1].ctype} expression, but it must be a bool expression!",
                     line, inline_index)
 
 
@@ -527,7 +572,7 @@ def set_new_scope(self: Node):
     self.siblings[1].func_return_type = self.parent.func_return_type
     self.siblings[1].start_scope = self.siblings[0].line
     self.siblings[1].end_scope = self.siblings[2].line
-    self.siblings[1].scope = Scope(str(uuid4()), self.parent.scope)
+    self.siblings[1].scope = Scope(str(uuid4()), parent=self.parent.scope)
 
 
 def check_print(self: Node):

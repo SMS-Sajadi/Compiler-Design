@@ -23,10 +23,8 @@ add_variable_node = Node('add_variable', is_semantic=True, func=add_variable)
 set_var_declaration_expected_type_node = Node('set_var_declaration_expected_type', is_semantic=True,
                                               func=set_var_declaration_expected_type)
 set_const_value_node = Node('set_const_value', is_semantic=True, func=set_const_value)
-set_immutable_type_numeric_node = Node('set_immutable_type_numeric_node', is_semantic=True,
-                                       func=set_immutable_type_numeric)
-set_immutable_type_relational_node = Node('set_immutable_type_relational', is_semantic=True,
-                                          func=set_immutable_type_relational)
+set_immutable_type_node = Node('set_immutable_type_numeric_node', is_semantic=True,
+                                       func=set_immutable_type)
 give_type_to_next_numeric_node = Node('give_type_to_next', is_semantic=True, func=give_type_to_next_numeric)
 give_type_to_parent_end_node = Node('give_type_to_parent_end', is_semantic=True, func=give_type_to_parent_end)
 give_type_to_parent_node = Node('give_type_to_parent', is_semantic=True, func=give_type_to_parent)
@@ -115,11 +113,11 @@ SDD: Final = {
     'stmt': [
         [give_scope_to_others_node, 'Declaration', 'T_Semicolon'],
         [give_func_return_type_node, 'other_stmt'],
-        ['Assignment', 'T_Semicolon'],
+        [give_scope_to_others_node, 'Assignment', 'T_Semicolon'],
         [give_func_return_type_node, 'for_statement'],
         [give_func_return_type_node, 'if_statement'],
-        ['print_statement', 'T_Semicolon'],
-        ['unary_assignment', 'T_Semicolon'],
+        [give_scope_to_others_node, 'print_statement', 'T_Semicolon'],
+        [give_scope_to_others_node, 'unary_assignment', 'T_Semicolon'],
         [set_new_scope_node, 'T_LC', 'Stmts', 'T_RC'],
     ],
     'Declaration': [
@@ -137,7 +135,7 @@ SDD: Final = {
         [set_var_declaration_expected_type_node, 'declare_mutable', 'Declaration_Assign', add_variable_node],
     ],
     'Declaration_Assign': [
-        ['T_Assign', 'Exp', set_declaration_assign_node],
+        [give_scope_to_others_node, 'T_Assign', 'Exp', set_declaration_assign_node],
         ['epsilon', set_declaration_assign_node],
     ],
     'declare_mutable': [
@@ -147,16 +145,17 @@ SDD: Final = {
         ['T_Id', give_base_type_to_bracket_node, 'bracket', check_mutable_type_node],
     ],
     'bracket': [
-        ['T_LB', 'Exp', 'T_RB', set_bracket_type_inuse_node, 'bracket', set_bracket_type_inuse_end_node],
+        [give_scope_to_others_node, 'T_LB', 'Exp', 'T_RB', set_bracket_type_inuse_node, 'bracket',
+         set_bracket_type_inuse_end_node],
         ['epsilon', set_bracket_type_inuse_end_node],
     ],
     'Assign': [
-        ['T_Assign', 'Exp', check_assignment_state_node],
-        ['T_AOp_PL', 'T_Assign', 'Exp', check_assignment_state_node],
-        ['T_AOp_MN', 'T_Assign', 'Exp', check_assignment_state_node],
-        ['T_AOp_ML', 'T_Assign', 'Exp', check_assignment_state_node],
-        ['T_AOp_DV', 'T_Assign', 'Exp', check_assignment_state_node],
-        ['T_AOp_RM', 'T_Assign', 'Exp', check_assignment_state_node],
+        [give_scope_to_others_node, 'T_Assign', 'Exp', check_assignment_state_node],
+        [give_scope_to_others_node, 'T_AOp_PL', 'T_Assign', 'Exp', check_assignment_state_node],
+        [give_scope_to_others_node, 'T_AOp_MN', 'T_Assign', 'Exp', check_assignment_state_node],
+        [give_scope_to_others_node, 'T_AOp_ML', 'T_Assign', 'Exp', check_assignment_state_node],
+        [give_scope_to_others_node, 'T_AOp_DV', 'T_Assign', 'Exp', check_assignment_state_node],
+        [give_scope_to_others_node, 'T_AOp_RM', 'T_Assign', 'Exp', check_assignment_state_node],
         ['epsilon', check_assignment_state_node],
     ],
     'check_call': [
@@ -168,7 +167,7 @@ SDD: Final = {
     'other_stmt': [
         ['T_Break', 'T_Semicolon'],
         ['T_Continue', 'T_Semicolon'],
-        ['T_Return', 'Exp', 'T_Semicolon', set_return_state_node],
+        [give_scope_to_others_node, 'T_Return', 'Exp', 'T_Semicolon', set_return_state_node],
     ],
     'Args': [
         [give_args_list_to_next_node, 'Exp', add_argument_node, 'Args_list'],
@@ -179,30 +178,33 @@ SDD: Final = {
         ['epsilon'],
     ],
     'Assignment': [
-        ['T_Id', get_id_type_node, 'check_call'],
+        [give_scope_to_others_node, 'T_Id', get_id_type_node, 'check_call'],
     ],
     'Exp': [
-        ['and_expr', give_type_to_next_logical_node, 'A', give_type_to_parent_node],
+        [give_scope_to_others_node, 'and_expr', give_type_to_next_logical_node, 'A', give_type_to_parent_node],
     ],
     'A': [
-        ['T_LOp_OR', 'and_expr', give_type_to_next_logical_node, 'A', give_type_to_parent_relational_node],
+        [give_scope_to_others_node, 'T_LOp_OR', 'and_expr', give_type_to_next_logical_node, 'A',
+         give_type_to_parent_relational_node],
         ['epsilon', give_type_to_parent_end_node],
     ],
     'and_expr': [
-        ['unary_expr', give_type_to_next_logical_node, 'B', give_type_to_parent_node],
+        [give_scope_to_others_node, 'unary_expr', give_type_to_next_logical_node, 'B', give_type_to_parent_node],
     ],
     'B': [
-        ['T_LOp_AND', 'unary_expr', give_type_to_next_logical_node, 'B', give_type_to_parent_relational_node],
+        [give_scope_to_others_node, 'T_LOp_AND', 'unary_expr', give_type_to_next_logical_node, 'B',
+         give_type_to_parent_relational_node],
         ['epsilon', give_type_to_parent_end_node],
     ],
     'unary_expr': [
-        ['rel_expr', set_const_value_node],
+        [give_scope_to_others_node, 'rel_expr', set_const_value_node],
     ],
     'rel_expr': [
-        ['sum_expr', give_type_to_next_relational_node, 'C', give_type_to_parent_node],
+        [give_scope_to_others_node, 'sum_expr', give_type_to_next_relational_node, 'C', give_type_to_parent_node],
     ],
     'C': [
-        ['rel_op', 'sum_expr', give_type_to_next_relational_node, 'C', give_type_to_parent_relational_node],
+        [give_scope_to_others_node, 'rel_op', 'sum_expr', give_type_to_next_relational_node, 'C',
+         give_type_to_parent_relational_node],
         ['epsilon', give_type_to_parent_end_node],
     ],
     'rel_op': [
@@ -214,10 +216,10 @@ SDD: Final = {
         ['T_ROp_E'],
     ],
     'sum_expr': [
-        ['mul_expr', give_type_to_next_numeric_node, 'D', give_type_to_parent_node],
+        [give_scope_to_others_node, 'mul_expr', give_type_to_next_numeric_node, 'D', give_type_to_parent_node],
     ],
     'D': [
-        ['sum_op', 'mul_expr', give_type_to_next_numeric_node, 'D', give_type_to_parent_node],
+        [give_scope_to_others_node, 'sum_op', 'mul_expr', give_type_to_next_numeric_node, 'D', give_type_to_parent_node],
         ['epsilon', give_type_to_parent_end_node],
     ],
     'sum_op': [
@@ -225,10 +227,10 @@ SDD: Final = {
         ['T_AOp_MN'],
     ],
     'mul_expr': [
-        ['factor', give_type_to_next_numeric_node, 'E', give_type_to_parent_node],
+        [give_scope_to_others_node, 'factor', give_type_to_next_numeric_node, 'E', give_type_to_parent_node],
     ],
     'E': [
-        ['mul_op', 'factor', give_type_to_next_numeric_node, 'E', give_type_to_parent_node],
+        [give_scope_to_others_node, 'mul_op', 'factor', give_type_to_next_numeric_node, 'E', give_type_to_parent_node],
         ['epsilon', give_type_to_parent_end_node],
     ],
     'mul_op': [
@@ -237,8 +239,9 @@ SDD: Final = {
         ['T_AOp_RM'],
     ],
     'factor': [
-        ['immutable', set_const_value_node],
-        ['T_Id', set_bracket_type_in_exp_node, 'mutable_or_function_call', give_type_to_parent_mutable_or_function_node],
+        [give_scope_to_others_node, 'immutable', set_const_value_node],
+        [give_scope_to_others_node, 'T_Id', set_bracket_type_in_exp_node, 'mutable_or_function_call',
+         give_type_to_parent_mutable_or_function_node],
     ],
     'mutable_or_function_call': [
         [set_var_declaration_expected_type_node, 'bracket', set_bracket_type_inuse_end_node],
@@ -249,11 +252,11 @@ SDD: Final = {
         ['T_LP', set_args_list_node, 'Args', 'T_RP', check_call_node],
     ],
     'immutable': [
-        ['T_LP', 'Exp', 'T_RP', set_immutable_type_numeric],
+        [give_scope_to_others_node, 'T_LP', 'Exp', 'T_RP', set_immutable_type_node],
         ['const', set_const_value_node],
-        ['T_AOp_PL', 'factor', set_immutable_type_numeric_node],
-        ['T_AOp_MN', 'factor', set_immutable_type_numeric_node],
-        ['T_LOp_NOT', 'rel_expr', set_immutable_type_relational_node],
+        [give_scope_to_others_node, 'T_AOp_PL', 'factor', set_immutable_type_node],
+        [give_scope_to_others_node, 'T_AOp_MN', 'factor', set_immutable_type_node],
+        [give_scope_to_others_node, 'T_LOp_NOT', 'rel_expr', set_immutable_type_node],
     ],
     'const': [
         ['T_Character', set_const_value_node],
@@ -269,20 +272,21 @@ SDD: Final = {
     ],
     'pre_loop': [
         [give_scope_to_others_node, 'Declaration'],
-        ['Assignment'],
+        [give_scope_to_others_node, 'Assignment'],
         ['epsilon'],
     ],
     'optional_expr': [
-        ['Exp', check_optional_expr_for_node],
+        [give_scope_to_others_node, 'Exp', check_optional_expr_for_node],
         ['epsilon'],
     ],
     'optional_assignment': [
-        ['Assignment'],
-        ['unary_assignment'],
+        [give_scope_to_others_node, 'Assignment'],
+        [give_scope_to_others_node, 'unary_assignment'],
         ['epsilon'],
     ],
     'if_statement': [
-        ['T_If', 'T_LP', 'Exp', 'T_RP', 'T_LC', set_stmts_scope_in_if_node, 'Stmts', 'T_RC', 'else_if'],
+        [give_scope_to_others_node, 'T_If', 'T_LP', 'Exp', 'T_RP', 'T_LC', set_stmts_scope_in_if_node, 'Stmts', 'T_RC',
+         'else_if'],
     ],
     'else_if': [
         [give_func_return_type_node, 'T_Else', 'check_if'],
@@ -299,8 +303,8 @@ SDD: Final = {
         ['T_Print', 'T_LP', set_args_list_node, 'Args', 'T_RP', check_print_node],
     ],
     'unary_assignment': [
-        ['T_AOp_PL', 'T_AOp_PL', 'mutable'],
-        ['T_AOp_MN', 'T_AOp_MN', 'mutable'],
+        [give_scope_to_others_node, 'T_AOp_PL', 'T_AOp_PL', 'mutable'],
+        [give_scope_to_others_node, 'T_AOp_MN', 'T_AOp_MN', 'mutable'],
     ]
 }
 
