@@ -27,6 +27,11 @@ def add_function(self: Node):
         if func.name == function_name:
             raise_error("Function already exists", line, inline_index)
 
+    for var in VARIABLES:
+        if var.name == function_name:
+            raise_error(f"You have defined it as a variable in line {var.scope_start} - "
+                        f"Please change the function name!", line, inline_index)
+
     new_function = Function(function_name)
     new_function.return_type = function_return_type
     new_function.entries = self.siblings[4].parameters
@@ -42,9 +47,17 @@ def add_variable(self: Node):
     line = self.siblings[1].line
     inline_index = self.siblings[1].inline_index
 
+    if var_name == "main":
+        raise_error("You can't use main as a variable name!", line, inline_index)
+
     for var in VARIABLES:
         if var.name == var_name and var.scope_end >= line >= var.scope_start and var.scope == scope:
             raise_error(f"You have declared the variable in line {var.scope_start}", line, inline_index)
+
+    for func in FUNCTIONS:
+        if func.name == var_name:
+            raise_error(f"You have defined it as a function in line {func.declaration_line} - "
+                        f"Please change the variable name!", line, inline_index)
 
     assignment_type = self.siblings[2].ctype
     inline_index += len(var_name) + 2
@@ -452,8 +465,6 @@ def get_id_type(self: Node):
 
     if not has_declared:
         raise_error("You must declare the variable first!", line, inline_index)
-
-    # TODO: Prevent from creating a var with the name of a function
 
 
 def set_args_list(self: Node):
