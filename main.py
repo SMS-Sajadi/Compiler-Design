@@ -42,6 +42,8 @@ def main(source, output, debug=False, with_ws=False, tree_print=True, graphic_pr
     set_program_for_semantic_error(program)
     check_code(syntax_tree)
 
+    print("\033[92mYour Program Compiled Successfully!")
+
 
 if __name__ == '__main__':
     """
